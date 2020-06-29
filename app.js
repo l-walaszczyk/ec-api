@@ -41,8 +41,6 @@ app.listen(port, () => {
 
 // \/ FUNCTIONS FOR SCHEDULER \/
 
-// const getData = async (dateMin, dateMax) => {};
-
 const isWeekOutOfRange = (date) => {
   const dateMin = moment.utc();
   const dateMax = moment.utc().add(1, "month").endOf("month");
@@ -53,7 +51,10 @@ const isWeekOutOfRange = (date) => {
   return res;
 };
 
-const getHoursFromRule = (date, generalRule, ruleOverride) => {
+const getHoursFromRule = (date, generalRule, ruleOverrides) => {
+  const ruleOverride = ruleOverrides.find((override) =>
+    date.isSame(override.day, "day")
+  );
   const slots = ruleOverride
     ? ruleOverride.slots
     : generalRule[date.clone().get("isoWeekday") - 1];
@@ -74,9 +75,13 @@ const getHoursFromRule = (date, generalRule, ruleOverride) => {
 };
 
 const getHoursFromMeetings = (date, meetings) => {
+  const meetingsOnDate = meetings.filter((meeting) =>
+    date.isSame(meeting.meetingDate, "day")
+  );
+
   const hours = [];
 
-  for (const { meetingDate, meetingDuration } of meetings) {
+  for (const { meetingDate, meetingDuration } of meetingsOnDate) {
     const startHour =
       moment.utc(meetingDate).get("hour") +
       Math.round(
@@ -103,10 +108,10 @@ const generateHours = (
   date,
   meetingDuration,
   generalRule,
-  ruleOverride,
+  ruleOverrides,
   meetings
 ) => {
-  const hoursFromRule = getHoursFromRule(date, generalRule, ruleOverride);
+  const hoursFromRule = getHoursFromRule(date, generalRule, ruleOverrides);
   const hoursFromMeetings = getHoursFromMeetings(date, meetings);
   const hoursCandidate = hoursFromRule.filter(
     (hour) => !hoursFromMeetings.includes(hour)
@@ -137,7 +142,7 @@ const generateWeekArray = (
   meetingDuration,
   limitingUTCHour,
   generalRule,
-  ruleOverride,
+  ruleOverrides,
   meetings
 ) => {
   const weeksFirstDay = date.clone().startOf("isoWeek");
@@ -156,7 +161,7 @@ const generateWeekArray = (
         day,
         meetingDuration,
         generalRule,
-        ruleOverride,
+        ruleOverrides,
         meetings
       );
     }
@@ -171,7 +176,7 @@ const validateInputDate = (
   meetingDuration,
   limitingUTCHour,
   generalRule,
-  ruleOverride,
+  ruleOverrides,
   meetings
 ) => {
   if (isWeekOutOfRange(date)) {
@@ -188,7 +193,7 @@ const validateInputDate = (
         meetingDuration,
         limitingUTCHour,
         generalRule,
-        ruleOverride,
+        ruleOverrides,
         meetings
       );
     } else {
@@ -197,7 +202,7 @@ const validateInputDate = (
         meetingDuration,
         limitingUTCHour,
         generalRule,
-        ruleOverride,
+        ruleOverrides,
         meetings
       );
     }
@@ -223,7 +228,7 @@ const returnTheRightArray = (
   back,
   limitingUTCHour,
   generalRule,
-  ruleOverride,
+  ruleOverrides,
   meetings
 ) => {
   const resultOutOfRange = validateInputDate(
@@ -232,7 +237,7 @@ const returnTheRightArray = (
     meetingDuration,
     limitingUTCHour,
     generalRule,
-    ruleOverride,
+    ruleOverrides,
     meetings
   );
 
@@ -248,7 +253,7 @@ const returnTheRightArray = (
       meetingDuration,
       limitingUTCHour,
       generalRule,
-      ruleOverride,
+      ruleOverrides,
       meetings
     );
 
@@ -271,7 +276,7 @@ const returnTheRightArray = (
     meetingDuration,
     limitingUTCHour,
     generalRule,
-    ruleOverride,
+    ruleOverrides,
     meetings
   );
 };
@@ -323,27 +328,27 @@ app.get("/:mode/", async (req, res) => {
 
   const { generalRule, limitingUTCHour } = rules;
 
-  const ruleOverride = await Overrides.findOne(
+  const ruleOverrides = await Overrides.find(
     {
       day: {
-        $gte: date.startOf("day").toDate(),
-        $lte: date.endOf("day").toDate(),
+        $gte: moment.utc().toDate(),
+        $lte: moment.utc().add(1, "month").endOf("month").toDate(),
       },
     },
-    (err, ruleOverride) => {
+    (err, ruleOverrides) => {
       if (err) {
         res.status(404).send("Database error");
         return console.log("Error while importing Overrides from db: ", err);
       }
-      return ruleOverride;
+      return ruleOverrides;
     }
   );
 
   const meetings = await Meetings.find(
     {
       meetingDate: {
-        $gte: date.startOf("day").toDate(),
-        $lte: date.endOf("day").toDate(),
+        $gte: moment.utc().toDate(),
+        $lte: moment.utc().add(1, "month").endOf("month").toDate(),
       },
     },
     (err, meetings) => {
@@ -363,7 +368,7 @@ app.get("/:mode/", async (req, res) => {
     limitingUTCHour,
     back,
     generalRule,
-    ruleOverride,
+    ruleOverrides,
     meetings
   );
   console.log(array);
