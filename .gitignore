@@ -10,7 +10,4 @@
 
 npm-debug.log*
 
-config.js
-
-# temp files
-/json
+# config.js
