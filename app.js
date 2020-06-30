@@ -37,6 +37,12 @@ app.listen(port, () => {
   console.log(`Server is listening at http://localhost:${port}`);
 });
 
+//Temporary CORS deactivatiion. CORS will be eventually handled by a proxy in the UI sever.
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", "*");
+  next();
+});
+
 // /\ SERVER LISTEN /\
 
 // \/ FUNCTIONS FOR SCHEDULER \/
