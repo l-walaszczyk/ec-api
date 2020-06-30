@@ -373,7 +373,7 @@ app.get("/:mode/", async (req, res) => {
   );
   console.log(array);
 
-  res.json({ array });
+  res.json(array);
 });
 
 // /\ SCHEDULER /\
