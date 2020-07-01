@@ -159,7 +159,8 @@ const generateWeekArray = (
     if (
       (moment.utc().isSame(day.utc(), "day") &&
         moment.utc().hour() >= limitingUTCHour) ||
-      day.utc().isAfter(moment.utc().add(1, "month").endOf("month"), "day")
+      day.utc().isAfter(moment.utc().add(1, "month").endOf("month"), "day") ||
+      day.utc().isBefore(moment.utc())
     ) {
       hours = [];
     } else {
