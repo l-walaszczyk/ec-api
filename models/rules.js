@@ -2,16 +2,19 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const rulesSchema = new Schema({
-  generalRule: {
+  generalRuleLocalTime: {
     type: Array,
     required: [
       true,
-      "generalRule is required and it must be a 7-element array",
+      "generalRuleLocalTime is required and it must be a 7-element array",
     ],
   },
-  limitingUTCHour: {
+  limitingHourLocalTime: {
     type: Number,
-    required: [true, "limitingUTCHour is required and it must be a number"],
+    required: [
+      true,
+      "limitingHourLocalTime is required and it must be a number",
+    ],
   },
 });
 

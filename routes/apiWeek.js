@@ -4,8 +4,7 @@ const moment = require("moment");
 const Rules = require("../models/rules");
 const Overrides = require("../models/overrides");
 const Meetings = require("../models/meetings");
-const returnTheRightArray = require("../controllers/returnTheRightArray");
-const overrides = require("../models/overrides");
+const getWeekArray = require("../controllers/getWeekArray");
 
 router.get("/:mode/", async (req, res) => {
   const { mode } = req.params;
@@ -57,7 +56,7 @@ router.get("/:mode/", async (req, res) => {
   );
   // /\ GETTING DATA FROM DB /\
 
-  const array = returnTheRightArray(
+  const array = getWeekArray(
     mode,
     meetingDuration,
     dateQuery,

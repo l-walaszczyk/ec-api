@@ -15,13 +15,13 @@ const isWeekOutOfRange = (date) => {
   return res;
 };
 
-const getHoursFromRule = (date, generalRule, ruleOverrides) => {
+const getHoursFromRule = (date, generalRuleLocalTime, ruleOverrides) => {
   const ruleOverride = ruleOverrides.find((override) =>
     date.isSame(override.day, "day")
   );
   const slots = ruleOverride
     ? ruleOverride.slots
-    : generalRule[date.clone().get("isoWeekday") - 1];
+    : generalRuleLocalTime[date.clone().get("isoWeekday") - 1];
   console.log(slots);
 
   const hours = [];
@@ -71,11 +71,15 @@ const getHoursFromMeetings = (date, meetings) => {
 const generateHours = (
   date,
   meetingDuration,
-  generalRule,
+  generalRuleLocalTime,
   ruleOverrides,
   meetings
 ) => {
-  const hoursFromRule = getHoursFromRule(date, generalRule, ruleOverrides);
+  const hoursFromRule = getHoursFromRule(
+    date,
+    generalRuleLocalTime,
+    ruleOverrides
+  );
   const hoursFromMeetings = getHoursFromMeetings(date, meetings);
   const hoursCandidate = hoursFromRule.filter(
     (hour) => !hoursFromMeetings.includes(hour)
@@ -104,8 +108,8 @@ const generateHours = (
 const generateWeekArray = (
   date,
   meetingDuration,
-  limitingUTCHour,
-  generalRule,
+  limitingHourLocalTime,
+  generalRuleLocalTime,
   ruleOverrides,
   meetings
 ) => {
@@ -116,7 +120,7 @@ const generateWeekArray = (
     let hours;
     if (
       (moment.utc().isSame(day.utc(), "day") &&
-        moment.utc().hour() >= limitingUTCHour) ||
+        moment.utc().hour() >= limitingHourLocalTime) ||
       day.utc().isAfter(moment.utc().add(1, "month").endOf("month"), "day") ||
       day.utc().isBefore(moment.utc())
     ) {
@@ -125,7 +129,7 @@ const generateWeekArray = (
       hours = generateHours(
         day,
         meetingDuration,
-        generalRule,
+        generalRuleLocalTime,
         ruleOverrides,
         meetings
       );
@@ -139,8 +143,8 @@ const validateInputDate = (
   dateInitial,
   date,
   meetingDuration,
-  limitingUTCHour,
-  generalRule,
+  limitingHourLocalTime,
+  generalRuleLocalTime,
   ruleOverrides,
   meetings
 ) => {
@@ -157,8 +161,8 @@ const validateInputDate = (
       return generateWeekArray(
         moment.utc(),
         meetingDuration,
-        limitingUTCHour,
-        generalRule,
+        limitingHourLocalTime,
+        generalRuleLocalTime,
         ruleOverrides,
         meetings
       );
@@ -166,8 +170,8 @@ const validateInputDate = (
       return generateWeekArray(
         dateInitial,
         meetingDuration,
-        limitingUTCHour,
-        generalRule,
+        limitingHourLocalTime,
+        generalRuleLocalTime,
         ruleOverrides,
         meetings
       );
@@ -186,9 +190,9 @@ const checkWeekArray = (weekArray) => {
 const jumpWeek = (date, back) => {
   back ? date.subtract(1, "week") : date.add(1, "week");
 };
-// /\ FUNCTIONS FOR returnTheRightArray /\
+// /\ FUNCTIONS FOR getWeekArray /\
 
-const returnTheRightArray = (
+const getWeekArray = (
   mode,
   meetingDuration,
   dateQuery,
@@ -220,14 +224,14 @@ const returnTheRightArray = (
   console.log("back:", back);
   console.log("generate week that includes:", date);
 
-  const { generalRule, limitingUTCHour } = rules;
+  const { generalRuleLocalTime, limitingHourLocalTime } = rules;
 
   const resultOutOfRange = validateInputDate(
     dateInitial,
     date,
     meetingDuration,
-    limitingUTCHour,
-    generalRule,
+    limitingHourLocalTime,
+    generalRuleLocalTime,
     ruleOverrides,
     meetings
   );
@@ -242,8 +246,8 @@ const returnTheRightArray = (
     arrayCandidate = generateWeekArray(
       date,
       meetingDuration,
-      limitingUTCHour,
-      generalRule,
+      limitingHourLocalTime,
+      generalRuleLocalTime,
       ruleOverrides,
       meetings
     );
@@ -265,11 +269,11 @@ const returnTheRightArray = (
   return generateWeekArray(
     dateInitial,
     meetingDuration,
-    limitingUTCHour,
-    generalRule,
+    limitingHourLocalTime,
+    generalRuleLocalTime,
     ruleOverrides,
     meetings
   );
 };
 
-module.exports = returnTheRightArray;
+module.exports = getWeekArray;
