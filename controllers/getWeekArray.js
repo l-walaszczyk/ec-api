@@ -1,4 +1,6 @@
-const moment = require("moment");
+const moment = require("moment-timezone");
+const timeZoneName = "Europe/Warsaw";
+const timeZone = moment.tz.zone(timeZoneName);
 
 // \/ SOME GENERAL RULES \/
 const blockFractionOfHour = 0.5;
@@ -15,22 +17,25 @@ const isWeekOutOfRange = (date) => {
   return res;
 };
 
-const getHoursFromRule = (date, generalRuleLocalTime, ruleOverrides) => {
+const getUTCHoursFromRule = (date, generalRuleLocalTime, ruleOverrides) => {
   const ruleOverride = ruleOverrides.find((override) =>
     date.isSame(override.day, "day")
   );
-  const slots = ruleOverride
-    ? ruleOverride.slots
+  const slotsLocalTime = ruleOverride
+    ? ruleOverride.slotsLocalTime
     : generalRuleLocalTime[date.clone().get("isoWeekday") - 1];
-  console.log(slots);
+
+  const timeOffset = timeZone.parse(date);
+  const timeOffsetHours = timeOffset / 60;
 
   const hours = [];
-  for (const [slotStart, slotEnd] of slots) {
-    const span = slotEnd - slotStart;
+  for (const [slotStartLocalTime, slotEndLocalTime] of slotsLocalTime) {
+    const span = slotEndLocalTime - slotStartLocalTime;
     const numberOfBlocks = Math.floor(span / blockFractionOfHour);
 
     for (let index = 0; index < numberOfBlocks; index++) {
-      const hour = slotStart + index * blockFractionOfHour;
+      const hour =
+        slotStartLocalTime + timeOffsetHours + index * blockFractionOfHour;
       hours.push(hour);
     }
   }
@@ -75,7 +80,7 @@ const generateHours = (
   ruleOverrides,
   meetings
 ) => {
-  const hoursFromRule = getHoursFromRule(
+  const hoursFromRule = getUTCHoursFromRule(
     date,
     generalRuleLocalTime,
     ruleOverrides
@@ -108,6 +113,7 @@ const generateHours = (
 const generateWeekArray = (
   date,
   meetingDuration,
+  limitingHourHowManyDaysBefore,
   limitingHourLocalTime,
   generalRuleLocalTime,
   ruleOverrides,
@@ -119,8 +125,11 @@ const generateWeekArray = (
     const day = weeksFirstDay.clone().add(index, "day");
     let hours;
     if (
-      (moment.utc().isSame(day.utc(), "day") &&
-        moment.utc().hour() >= limitingHourLocalTime) ||
+      (moment
+        .utc()
+        .add(limitingHourHowManyDaysBefore, "day")
+        .isSame(day.utc(), "day") &&
+        moment.tz(timeZoneName).hour() >= limitingHourLocalTime) ||
       day.utc().isAfter(moment.utc().add(1, "month").endOf("month"), "day") ||
       day.utc().isBefore(moment.utc())
     ) {
@@ -143,6 +152,7 @@ const validateInputDate = (
   dateInitial,
   date,
   meetingDuration,
+  limitingHourHowManyDaysBefore,
   limitingHourLocalTime,
   generalRuleLocalTime,
   ruleOverrides,
@@ -161,6 +171,7 @@ const validateInputDate = (
       return generateWeekArray(
         moment.utc(),
         meetingDuration,
+        limitingHourHowManyDaysBefore,
         limitingHourLocalTime,
         generalRuleLocalTime,
         ruleOverrides,
@@ -170,6 +181,7 @@ const validateInputDate = (
       return generateWeekArray(
         dateInitial,
         meetingDuration,
+        limitingHourHowManyDaysBefore,
         limitingHourLocalTime,
         generalRuleLocalTime,
         ruleOverrides,
@@ -224,12 +236,17 @@ const getWeekArray = (
   console.log("back:", back);
   console.log("generate week that includes:", date);
 
-  const { generalRuleLocalTime, limitingHourLocalTime } = rules;
+  const {
+    generalRuleLocalTime,
+    limitingHourHowManyDaysBefore,
+    limitingHourLocalTime,
+  } = rules;
 
   const resultOutOfRange = validateInputDate(
     dateInitial,
     date,
     meetingDuration,
+    limitingHourHowManyDaysBefore,
     limitingHourLocalTime,
     generalRuleLocalTime,
     ruleOverrides,
@@ -246,6 +263,7 @@ const getWeekArray = (
     arrayCandidate = generateWeekArray(
       date,
       meetingDuration,
+      limitingHourHowManyDaysBefore,
       limitingHourLocalTime,
       generalRuleLocalTime,
       ruleOverrides,
@@ -269,6 +287,7 @@ const getWeekArray = (
   return generateWeekArray(
     dateInitial,
     meetingDuration,
+    limitingHourHowManyDaysBefore,
     limitingHourLocalTime,
     generalRuleLocalTime,
     ruleOverrides,

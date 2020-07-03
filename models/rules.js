@@ -9,6 +9,13 @@ const rulesSchema = new Schema({
       "generalRuleLocalTime is required and it must be a 7-element array",
     ],
   },
+  limitingHourHowManyDaysBefore: {
+    type: Number,
+    required: [
+      true,
+      "limitingHourHowManyDaysBefore is required and it must be a number",
+    ],
+  },
   limitingHourLocalTime: {
     type: Number,
     required: [

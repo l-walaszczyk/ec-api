@@ -6,7 +6,7 @@ const overridesSchema = new Schema({
     type: Date,
     required: [true, "day is required and it must be a Date obcject"],
   },
-  slots: {
+  slotsLocalTime: {
     type: Array,
     required: [true, "slots is required and it must be an array, can be empty"],
   },
