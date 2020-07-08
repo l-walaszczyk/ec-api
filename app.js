@@ -1,10 +1,12 @@
 const express = require("express");
-const createError = require("http-errors");
-const config = require("./config");
 const mongoose = require("mongoose");
+const config = require("./config/config");
+// const cookieSession = require("cookie-session");
+const cookieParser = require("cookie-parser");
+const purgeTempMeetings = require("./functions/purgeTempMeetings");
 
 // \/ CONNECTION WITH DATABASE \/
-mongoose.connect(config.db, {
+mongoose.connect(config.mongo, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -18,31 +20,32 @@ db.once("open", () => {
 
 const app = express();
 
+// Cookies
+app.use(cookieParser());
+
 // Temporary CORS deactivation. CORS will be eventually handled by a proxy in the UI sever.
 app.use((req, res, next) => {
+  // res.header("Content-Type", "application/json;charset=UTF-8");
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Credentials", true);
+  // res.header(
+  //   "Access-Control-Allow-Headers",
+  //   "Origin, X-Requested-With, Content-Type, Accept"
+  // );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+  );
   next();
 });
 
 // \/ ROUTES \/
-const apiWeekRouter = require("./routes/apiWeek");
-app.use("/api/week", apiWeekRouter);
+const apiRouter = require("./routes/api");
+app.use("/api", apiRouter);
 // /\ ROUTES /\
 
-// catch 404 and forward to error handler
-app.use(function (req, res, next) {
-  next(createError(404));
-});
-
-// error handler
-app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get("env") === "development" ? err : {};
-
-  // render the error page
-  res.status(err.status || 500);
-  res.render("error");
-});
+// \/  PURGE TEMP MEETINGS \/
+purgeTempMeetings();
+// /\  PURGE TEMP MEETINGS /\
 
 module.exports = app;
