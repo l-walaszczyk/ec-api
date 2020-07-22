@@ -106,6 +106,22 @@ Długość wizyty: ${meetingDuration} minut`);
 });
 // /\ BOOK MEETING /\
 
+// \/ SUMMARY \/
+router.patch("/summary", (req, res) => {
+  const { id } = req.query;
+  console.log("Saving summary for meeting id:", id);
+
+  const summary = req.body;
+  console.log(summary);
+
+  res.cookie("rememberme", "1", {
+    expires: new Date(Date.now() + 900000),
+    httpOnly: true,
+  });
+  res.status(201).json({ success: true });
+});
+// /\ SUMMARY /\
+
 // \/ MODIFY MEETING \/
 router.patch("/", (req, res) => {
   const { date, meetingDuration, id } = req.query;

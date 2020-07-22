@@ -2,7 +2,8 @@ const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./config/config");
 // const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
 const purgeTempMeetings = require("./functions/purgeTempMeetings");
 
 // \/ CONNECTION WITH DATABASE \/
@@ -21,17 +22,15 @@ db.once("open", () => {
 const app = express();
 
 // Cookies
-app.use(cookieParser());
+// app.use(cookieParser());
 
-// Temporary CORS deactivation. CORS will be eventually handled by a proxy in the UI sever.
+app.use(bodyParser.json());
+
 app.use((req, res, next) => {
   // res.header("Content-Type", "application/json;charset=UTF-8");
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Origin", config.acceptedOrigin);
   res.header("Access-Control-Allow-Credentials", true);
-  // res.header(
-  //   "Access-Control-Allow-Headers",
-  //   "Origin, X-Requested-With, Content-Type, Accept"
-  // );
+  res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
   res.header(
     "Access-Control-Allow-Methods",
     "GET,PUT,POST,DELETE,PATCH,OPTIONS"
