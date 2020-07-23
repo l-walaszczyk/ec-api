@@ -2,7 +2,7 @@ const Meetings = require("../models/meetings");
 const { purgeTempMeetingsOlderThan } = require("../config/config");
 const moment = require("moment");
 
-const purgeTempMeetings = () => {
+const purgeTempMeetings = async () => {
   const creationDateMin = moment
     .utc()
     .subtract(purgeTempMeetingsOlderThan, "minutes")
@@ -12,13 +12,12 @@ const purgeTempMeetings = () => {
     $and: [{ status: "temp" }, { creationDate: { $lt: creationDateMin } }],
   };
 
-  Meetings.deleteMany(meetingsSearchParams, (err, res) => {
-    if (err) {
-      return "Error while purging temp meetings:" + err;
-    }
-    return `Successfully purged ${res.n} meetings.`;
-    // setTimeout(purgeTempMeetings, 1000 * 60 * purgeTempMeetingsOlderThan);
-  });
+  const res = await Meetings.deleteMany(meetingsSearchParams);
+
+  if (!res.ok) {
+    return "Error while purging temp meetings:" + err;
+  }
+  return `Successfully purged ${res.n} meetings.`;
 };
 
 module.exports = purgeTempMeetings;
