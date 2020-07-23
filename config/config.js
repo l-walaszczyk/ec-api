@@ -3,8 +3,11 @@ module.exports = {
   blockFractionOfHour: 0.5,
   purgeTempMeetingsOlderThan: 30,
   // /\ SOME GENERAL RULES /\
-  // acceptedOrigin: "http://localhost:3000",
-  acceptedOrigin: "https://*emiliacwojdzinska.pl",
+  allowedOrigins: [
+    "https://emiliacwojdzinska.pl",
+    "https://www.emiliacwojdzinska.pl",
+    "http://localhost:3000",
+  ],
   mongo:
     "mongodb+srv://admin:BVLqqAaAQQvjhqXJ@ec-cluster-icadi.mongodb.net/test?retryWrites=true&w=majority",
   keySession: ["TWOJKLUCZ"],

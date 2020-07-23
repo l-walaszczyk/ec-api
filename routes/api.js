@@ -12,7 +12,6 @@ const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromD
 
 // \/ PURGE TEMP MEETINGS \/
 router.get("/purge", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "*");
   const message = purgeTempMeetings();
   console.log(message);
   res.send(message);

@@ -26,8 +26,11 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
-  // res.header("Content-Type", "application/json;charset=UTF-8");
-  res.header("Access-Control-Allow-Origin", config.acceptedOrigin);
+  if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
+    res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
+  } else {
+    res.setHeader("Access-Control-Allow-Origin", "*");
+  }
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
   res.header(
