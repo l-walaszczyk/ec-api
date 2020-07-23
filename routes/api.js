@@ -11,8 +11,8 @@ const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 
 // \/ PURGE TEMP MEETINGS \/
-router.get("/purge", (req, res) => {
-  const message = purgeTempMeetings();
+router.get("/purge", async (req, res) => {
+  const message = await purgeTempMeetings();
   console.log(message);
   res.send(message);
 });
