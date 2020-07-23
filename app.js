@@ -4,7 +4,6 @@ const config = require("./config/config");
 // const cookieSession = require("cookie-session");
 // const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const purgeTempMeetings = require("./functions/purgeTempMeetings");
 
 // \/ CONNECTION WITH DATABASE \/
 mongoose.connect(config.mongo, {
@@ -42,9 +41,5 @@ app.use((req, res, next) => {
 const apiRouter = require("./routes/api");
 app.use("/api", apiRouter);
 // /\ ROUTES /\
-
-// \/  PURGE TEMP MEETINGS \/
-purgeTempMeetings();
-// /\  PURGE TEMP MEETINGS /\
 
 module.exports = app;

@@ -4,10 +4,19 @@ const moment = require("moment");
 // const Rules = require("../models/rules");
 // const Overrides = require("../models/overrides");
 const Meetings = require("../models/meetings");
+const purgeTempMeetings = require("../functions/purgeTempMeetings");
 const getWeekArray = require("../functions/getWeekArray");
 const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
+
+// \/ PURGE TEMP MEETINGS \/
+router.get("/purge", (req, res) => {
+  const message = purgeTempMeetings();
+
+  res.send(message);
+});
+// /\ PURGE TEMP MEETINGS /\
 
 // \/ GET WEEK \/
 router.get("/week/:mode/", async (req, res) => {
@@ -117,6 +126,8 @@ router.patch("/summary", (req, res) => {
   res.cookie("rememberme", "1", {
     expires: new Date(Date.now() + 900000),
     httpOnly: true,
+    sameSite: "none",
+    secure: true,
   });
   res.status(201).json({ success: true });
 });

@@ -14,10 +14,10 @@ const purgeTempMeetings = () => {
 
   Meetings.deleteMany(meetingsSearchParams, (err, res) => {
     if (err) {
-      return console.log("Error while purging temp meetings:", err);
+      return "Error while purging temp meetings:" + err;
     }
-    console.log(`Successfully purged ${res.n} meetings.`);
-    setTimeout(purgeTempMeetings, 1000 * 60 * purgeTempMeetingsOlderThan);
+    return `Successfully purged ${res.n} meetings.`;
+    // setTimeout(purgeTempMeetings, 1000 * 60 * purgeTempMeetingsOlderThan);
   });
 };
 
