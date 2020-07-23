@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./config/config");
@@ -6,7 +7,7 @@ const config = require("./config/config");
 const bodyParser = require("body-parser");
 
 // \/ CONNECTION WITH DATABASE \/
-mongoose.connect(config.mongo, {
+mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

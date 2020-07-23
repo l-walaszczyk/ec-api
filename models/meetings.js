@@ -9,6 +9,7 @@ const meetingsSchema = new Schema({
     required: [true, "meetingDuration is required, in minutes"],
   },
   creationDate: { type: Date, default: Date.now },
+  formData: { type: Object },
 });
 
 module.exports = mongoose.model("Meetings", meetingsSchema);

@@ -9,6 +9,8 @@ const getWeekArray = require("../functions/getWeekArray");
 const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
+const emailSender = require("../functions/emailSender");
+const meetings = require("../models/meetings");
 
 // \/ PURGE TEMP MEETINGS \/
 router.get("/purge", async (req, res) => {
@@ -56,7 +58,7 @@ Długość wizyty: ${meetingDuration} minut`);
     const savedMeeting = await newMeeting.save();
     // /\ POSTING DATA TO DB /\
 
-    // \/ GETTING DATA FROM DB  \/
+    // \/ GETTING DATA FROM DB \/
     const [
       { generalRuleLocalTime },
       ruleOverrides,
@@ -116,12 +118,22 @@ Długość wizyty: ${meetingDuration} minut`);
 // /\ BOOK MEETING /\
 
 // \/ SUMMARY \/
-router.patch("/summary", (req, res) => {
+router.patch("/summary", async (req, res) => {
   const { id } = req.query;
+
   console.log("Saving summary for meeting id:", id);
 
-  const summary = req.body;
-  console.log(summary);
+  const meetingDetails = req.body;
+
+  // \/ GETTING AND UPDATING DATA FROM DB \/
+  const meeting = await Meetings.findOne({ _id: id });
+
+  meeting.meetingDetails = { ...meetingDetails };
+
+  const updatedMeeting = await meeting.save(); // Throws DocumentNotFoundError
+  // /\ GETTING AND UPDATING DATA FROM DB /\
+
+  await emailSender(updatedMeeting);
 
   res.cookie("rememberme", "1", {
     expires: new Date(Date.now() + 900000),
