@@ -4,7 +4,7 @@ module.exports = {
   purgeTempMeetingsOlderThan: 30,
   // /\ SOME GENERAL RULES /\
   // acceptedOrigin: "http://localhost:3000",
-  acceptedOrigin: "https://emiliacwojdzinska.pl",
+  acceptedOrigin: "https://*emiliacwojdzinska.pl",
   mongo:
     "mongodb+srv://admin:BVLqqAaAQQvjhqXJ@ec-cluster-icadi.mongodb.net/test?retryWrites=true&w=majority",
   keySession: ["TWOJKLUCZ"],
