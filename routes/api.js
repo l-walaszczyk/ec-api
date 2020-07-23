@@ -123,25 +123,36 @@ router.patch("/summary", async (req, res) => {
 
   console.log("Saving summary for meeting id:", id);
 
-  const meetingDetails = req.body;
+  try {
+    // \/ GETTING AND UPDATING DATA FROM DB \/
+    const meeting = await Meetings.findById(req.query.id);
 
-  // \/ GETTING AND UPDATING DATA FROM DB \/
-  const meeting = await Meetings.findOne({ _id: id });
+    meeting.meetingDetails = { ...req.body };
+    meeting.status = "unpaid";
 
-  meeting.meetingDetails = { ...meetingDetails };
+    const updatedMeeting = await meeting.save();
+    // /\ GETTING AND UPDATING DATA FROM DB /\
 
-  const updatedMeeting = await meeting.save(); // Throws DocumentNotFoundError
-  // /\ GETTING AND UPDATING DATA FROM DB /\
+    await emailSender(updatedMeeting);
 
-  await emailSender(updatedMeeting);
+    // \/ GETTING DATA FROM DB \/
+    const checkedMeeting = await Meetings.findOne({
+      _id: id,
+      status: "unpaid",
+    });
+    // /\ GETTING DATA FROM DB /\
 
-  res.cookie("rememberme", "1", {
-    expires: new Date(Date.now() + 900000),
-    httpOnly: true,
-    sameSite: "none",
-    secure: true,
-  });
-  res.status(201).json({ success: true });
+    res.cookie("meetingID", checkedMeeting._id, {
+      expires: new Date(Date.now() + 900000),
+      httpOnly: true,
+      sameSite: "none",
+      secure: true,
+    });
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.log("Error", error);
+    res.status(500).json({ success: false });
+  }
 });
 // /\ SUMMARY /\
 
