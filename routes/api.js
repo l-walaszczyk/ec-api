@@ -169,4 +169,13 @@ Długość wizyty: ${meetingDuration} minut`);
 });
 // /\ MODIFY MEETING /\
 
+// \/ EMAIL DELIVERED \/
+router.post("/delivered", (req, res) => {
+  console.log("Email delivered");
+  console.log(req.body);
+
+  res.status(201).send("created");
+});
+// /\ EMAIL DELIVERED /\
+
 module.exports = router;
