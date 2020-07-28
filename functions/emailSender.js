@@ -48,10 +48,13 @@ const emailSender = async (meeting) => {
            } zł (do opłacenia podczas wizyty)</li>
            </ul>
           
-           <p>W ramach przygotowania do wizyty proszę o uzupełnienie <a href="https://emiliacwojdzinska.pl/downloads">formularza dostępnego 
-           na stronie</a> i przesłanie go do mnie mailowo lub zabranie ze sobą na spotkanie</p> 
-          
-          
+           <p>W ramach przygotowania do wizyty proszę o uzupełnienie kwestionariusza, znajdującego się
+           w materiałach do pobrania na mojej stronie i przesłanie go do mnie mailowo lub zabranie ze sobą na spotkanie</p>
+
+           <p>Linki do pobrania kwestionariusza:</p>
+           <p><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.doc">plik w formacie .doc</a> </p>
+           <p><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.pdf">plik w formacie .pdf</a> </p>
+                     
            <p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>
           
            <p>Pozdrawiam serdecznie i do zobaczenia,<br>
