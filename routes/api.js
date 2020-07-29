@@ -170,11 +170,13 @@ router.post("/delivered", async (req, res) => {
     try {
       // \/ GETTING AND UPDATING DATA FROM DB \/
       const meeting = await Meetings.findOne({
-        _emailDetails: { messageId },
+        emailDetails: { messageId },
       });
-
-      meeting.emailDetails.delivered = true;
-      console.log("Message delivered to", email);
+      console.log(meeting);
+      // meeting.emailDetails.delivered = true;
+      // console.log(
+      //   `Meeting ID ${meeting._id} confirmation message delivered to ${email}`
+      // );
 
       await meeting.save();
       // /\ GETTING AND UPDATING DATA FROM DB /\

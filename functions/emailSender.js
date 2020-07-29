@@ -45,10 +45,14 @@ const emailSender = async (meeting) => {
 
            <h3>Podsumowanie:</h3>
            <ul>
-           <li>Zapisany pacjent: ${patient1FirstName}</li>
+           ${
+             patient2FirstName
+               ? `<li>Zapisani pacjenci: ${patient1FirstName} i ${patient2FirstName}</li>`
+               : `<li>Zapisany pacjent: ${patient1FirstName}</li>`
+           }
            ${
              forSomeoneElse
-               ? `<li>Osoba kontaktowa, numer telefonu: ${contactFirstName}, ${telephone}</li>`
+               ? `<li>Osoba kontaktowa i jej nr. tel.: ${contactFirstName}, ${telephone}</li>`
                : `<li>Numer telefonu: ${telephone}</li>`
            }
            <li>Rodzaj spotkania: ${meetingType.name}</li>
