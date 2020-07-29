@@ -147,7 +147,7 @@ router.patch("/summary", async (req, res) => {
       status: "unpaid",
     });
 
-    checkedMeeting.emailDetails.messageId = messageId;
+    checkedMeeting.emailDetails = { messageId };
 
     await checkedMeeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\

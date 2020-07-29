@@ -41,7 +41,7 @@ const emailSender = async (meeting) => {
     html: `<p>Poniższa wiadomość została wygenerowana automatycznie.</p>
 
            <p>Dziękuję za umówienie wizyty w moim gabinecie.<br>
-           Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę oodpowiedzieć mailowo na tę wiadomość i podać porawione dane</p>
+           Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę oodpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
 
            <h3>Podsumowanie:</h3>
            <ul>
@@ -59,8 +59,8 @@ const emailSender = async (meeting) => {
            </ul>
           
            ${
-             meetingType.name.includes("dzieci") &&
-             `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
+             meetingType.name.includes("dziec")
+               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
              w materiałach do pobrania na mojej stronie i przesłanie go do mnie mailowo lub zabranie ze sobą na spotkanie.</p>
 
              <p>Linki do pobrania kwestionariusza:</p>
@@ -68,6 +68,7 @@ const emailSender = async (meeting) => {
              <li><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.doc">plik w formacie .doc (jeśli wypełniamy na komputerze)</a></li>
              <li><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.pdf">plik w formacie .pdf (jeśli drukujemy i wypełniamy ręcznie)</a></li>
              </ul>`
+               : ``
            }
 
            <p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>
