@@ -81,12 +81,12 @@ Długość wizyty: ${meetingDuration} minut`);
       meetings,
       allBlocks
     );
-    console.log(availableHours);
+    // console.log(availableHours);
 
     const hoursFromNewMeeting = getHoursFromMeetings(moment.utc(date), [
       savedMeeting,
     ]);
-    console.log(hoursFromNewMeeting);
+    // console.log(hoursFromNewMeeting);
 
     const hoursInConflict = hoursFromNewMeeting.filter(
       (hour) => !availableHours.includes(hour)
