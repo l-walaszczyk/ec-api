@@ -109,7 +109,7 @@ Długość wizyty: ${meetingDuration} minut`);
     } else {
       console.log("Brak konfliktu, termin zapisany");
       res.cookie("meetingID", savedMeeting._id, {
-        maxAge: 3600,
+        maxAge: 1000 * 60 * 60,
         httpOnly: true,
         sameSite: "none",
         secure: true,
