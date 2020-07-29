@@ -10,7 +10,7 @@ const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
-const meetings = require("../models/meetings");
+require("dotenv").config();
 
 // \/ PURGE TEMP MEETINGS \/
 router.get("/purge", async (req, res) => {
@@ -108,6 +108,12 @@ Długość wizyty: ${meetingDuration} minut`);
       res.status(409).json({ success: false });
     } else {
       console.log("Brak konfliktu, termin zapisany");
+      res.cookie("meetingID", savedMeeting._id, {
+        maxAge: 3600,
+        httpOnly: true,
+        sameSite: "none",
+        secure: true,
+      });
       res.status(201).json({ success: true, savedMeeting });
     }
   } catch (error) {
@@ -133,21 +139,19 @@ router.patch("/summary", async (req, res) => {
     const updatedMeeting = await meeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\
 
-    await emailSender(updatedMeeting);
+    const messageId = await emailSender(updatedMeeting);
 
-    // \/ GETTING DATA FROM DB \/
+    // \/ GETTING AND UPDATING DATA FROM DB \/
     const checkedMeeting = await Meetings.findOne({
       _id: id,
       status: "unpaid",
     });
-    // /\ GETTING DATA FROM DB /\
 
-    res.cookie("meetingID", checkedMeeting._id, {
-      expires: new Date(Date.now() + 900000),
-      httpOnly: true,
-      sameSite: "none",
-      secure: true,
-    });
+    checkedMeeting.emailDetails.messageId = messageId;
+
+    await checkedMeeting.save();
+    // /\ GETTING AND UPDATING DATA FROM DB /\
+
     res.status(201).json({ success: true });
   } catch (error) {
     console.log("Error", error);
@@ -156,26 +160,47 @@ router.patch("/summary", async (req, res) => {
 });
 // /\ SUMMARY /\
 
+// \/ EMAIL DELIVERED \/
+router.post("/delivered", async (req, res) => {
+  const { email } = req.body;
+  const messageId = req.body["message-id"];
+  console.log("Email delivered, messageId:", messageId);
+
+  if (email !== process.env.EMAIL_BCC) {
+    try {
+      // \/ GETTING AND UPDATING DATA FROM DB \/
+      const meeting = await Meetings.findOne({
+        _emailDetails: { messageId },
+      });
+
+      meeting.emailDetails.delivered = true;
+      console.log("Message delivered to", email);
+
+      await meeting.save();
+      // /\ GETTING AND UPDATING DATA FROM DB /\
+
+      res.status(201).send("created");
+    } catch (error) {
+      console.log("Error:", error);
+      res.status(500).send("Database error");
+    }
+  } else {
+    res.status(200).send("ok");
+  }
+});
+// /\ EMAIL DELIVERED /\
+
 // \/ MODIFY MEETING \/
 router.patch("/", (req, res) => {
   const { date, meetingDuration, id } = req.query;
 
   console.log(`Próba modyfikacji wizyty.
-ID: ${id}
-Data (UTC): ${date}
-Długość wizyty: ${meetingDuration} minut`);
+ ID: ${id}
+ Data (UTC): ${date}
+ Długość wizyty: ${meetingDuration} minut`);
 
   res.status(501).json({ success: false });
 });
 // /\ MODIFY MEETING /\
-
-// \/ EMAIL DELIVERED \/
-router.post("/delivered", (req, res) => {
-  console.log("Email delivered");
-  console.log(req.body);
-
-  res.status(201).send("created");
-});
-// /\ EMAIL DELIVERED /\
 
 module.exports = router;

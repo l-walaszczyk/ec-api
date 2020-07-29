@@ -10,6 +10,7 @@ const meetingsSchema = new Schema({
   },
   creationDate: { type: Date, default: Date.now },
   meetingDetails: { type: Object },
+  emailDetails: { type: Object },
 });
 
 module.exports = mongoose.model("Meetings", meetingsSchema);
