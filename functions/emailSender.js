@@ -52,7 +52,7 @@ const emailSender = async (meeting) => {
            }
            ${
              forSomeoneElse
-               ? `<li>Osoba kontaktowa i jej nr. tel.: ${contactFirstName}, ${telephone}</li>`
+               ? `<li>Osoba kontaktowa: ${contactFirstName}, tel.: ${telephone}</li>`
                : `<li>Numer telefonu: ${telephone}</li>`
            }
            <li>Rodzaj spotkania: ${meetingType.name}</li>
