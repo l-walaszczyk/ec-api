@@ -192,17 +192,4 @@ router.post("/delivered", async (req, res) => {
 });
 // /\ EMAIL DELIVERED /\
 
-// \/ MODIFY MEETING \/
-router.patch("/", (req, res) => {
-  const { date, meetingDuration, id } = req.query;
-
-  console.log(`Próba modyfikacji wizyty.
- ID: ${id}
- Data (UTC): ${date}
- Długość wizyty: ${meetingDuration} minut`);
-
-  res.status(501).json({ success: false });
-});
-// /\ MODIFY MEETING /\
-
 module.exports = router;
