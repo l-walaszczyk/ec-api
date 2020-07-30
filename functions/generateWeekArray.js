@@ -19,7 +19,7 @@ const generateWeekArray = (
     let hours;
     if (
       (moment
-        .utc()
+        .tz(timeZoneName)
         .add(limitingHourHowManyDaysBefore, "day")
         .isSame(day.utc(), "day") &&
         moment.tz(timeZoneName).hour() >= limitingHourLocalTime) ||
