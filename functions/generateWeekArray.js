@@ -16,15 +16,19 @@ const generateWeekArray = (
   const weekArray = [];
   for (let index = 0; index <= 6; index++) {
     const day = weeksFirstDay.clone().add(index, "day");
+    const dayLocalTime = day.clone().tz(timeZoneName).startOf("day");
+    const nowLocalTime = moment.tz(timeZoneName);
     let hours;
     if (
-      (moment
-        .tz(timeZoneName)
+      (nowLocalTime
         .add(limitingHourHowManyDaysBefore, "day")
-        .isSame(day.utc(), "day") &&
-        moment.tz(timeZoneName).hour() >= limitingHourLocalTime) ||
-      day.utc().isAfter(moment.utc().add(1, "month").endOf("month"), "day") ||
-      day.utc().isBefore(moment.utc())
+        .isSame(dayLocalTime, "day") &&
+        nowLocalTime.hour() >= limitingHourLocalTime) ||
+      dayLocalTime.isAfter(
+        nowLocalTime.add(1, "month").endOf("month"),
+        "day"
+      ) ||
+      dayLocalTime.isBefore(nowLocalTime)
     ) {
       hours = [];
     } else {
