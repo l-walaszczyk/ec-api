@@ -65,7 +65,7 @@ const emailSender = async (meeting) => {
            ${
              meetingType.name.includes("dziec")
                ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
-             w materiałach do pobrania na mojej stronie i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczyć osobiście podczas wizyty w gabinecie.</p>
+             w materiałach do pobrania na mojej stronie i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczenie osobiście podczas wizyty w gabinecie.</p>
 
              <p>Linki do pobrania kwestionariusza:</p>
              <ul>
