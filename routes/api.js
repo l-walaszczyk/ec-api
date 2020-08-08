@@ -26,6 +26,8 @@ router.get("/hours", async (req, res) => {
   const { direction, meetingDuration, date: dateQuery, id } = req.query;
   console.log(req.originalUrl);
 
+  console.log("Cookies: ", req.cookies);
+
   try {
     const [array, success] = await getWeekArray(
       direction,
