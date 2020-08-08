@@ -6,7 +6,7 @@ const checkWeekArray = require("./checkWeekArray");
 const jumpWeek = require("./jumpWeek");
 const getRulesAndMeetingsFromDB = require("./getRulesAndMeetingsFromDB");
 
-const getWeekArray = async (mode, meetingDuration, dateQuery, id) => {
+const getWeekArray = async (direction, meetingDuration, dateQuery, id) => {
   // \/ GETTING DATA FROM DB \/
   const [rules, ruleOverrides, meetings] = await getRulesAndMeetingsFromDB(
     moment.utc().toDate(),
@@ -23,7 +23,7 @@ const getWeekArray = async (mode, meetingDuration, dateQuery, id) => {
 
   let back = false;
 
-  switch (mode) {
+  switch (direction) {
     case "before":
       back = true;
       jumpWeek(date, back);
@@ -32,13 +32,13 @@ const getWeekArray = async (mode, meetingDuration, dateQuery, id) => {
       back = false;
       jumpWeek(date, back);
       break;
-    case "asap":
+    default:
       back = false;
       break;
   }
 
   // console.log("back:", back);
-  console.log("generate week that includes:", date);
+  // console.log("generate week that includes:", date);
 
   const {
     generalRuleLocalTime,

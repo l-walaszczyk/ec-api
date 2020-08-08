@@ -10,6 +10,7 @@ const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
+const przelewy24 = require("../functions/przelewy24");
 require("dotenv").config();
 
 // \/ PURGE TEMP MEETINGS \/
@@ -21,13 +22,13 @@ router.get("/purge", async (req, res) => {
 // /\ PURGE TEMP MEETINGS /\
 
 // \/ GET WEEK \/
-router.get("/week/:mode/", async (req, res) => {
-  const { mode } = req.params;
+router.get("/hours", async (req, res) => {
+  const { direction, meetingDuration, date: dateQuery, id } = req.query;
+  console.log(req.originalUrl);
 
-  const { meetingDuration, date: dateQuery, id } = req.query;
   try {
     const [array, success] = await getWeekArray(
-      mode,
+      direction,
       meetingDuration,
       dateQuery,
       id
@@ -41,18 +42,31 @@ router.get("/week/:mode/", async (req, res) => {
 // /\ GET WEEK /\
 
 // \/ BOOK MEETING \/
-router.post("/", async (req, res) => {
-  const { date, meetingDuration } = req.query;
+router.post("/meetings", async (req, res) => {
+  const {
+    date,
+    meetingName,
+    meetingPrice,
+    meetingDuration,
+    selectedFieldIndex,
+    numberOfPeople,
+  } = req.body;
 
-  console.log(`Próba zapisu wizyty.
-Data (UTC): ${date}
-Długość wizyty: ${meetingDuration} minut`);
+  console.log(req.originalUrl);
+
+  console.log(`Attempting to save a meeting.
+Date (UTC): ${date}
+Duration: ${meetingDuration} minutes`);
 
   try {
     // \/ POSTING DATA TO DB \/
     const newMeeting = new Meetings({
       meetingDate: moment.utc(date).toDate(),
+      meetingName,
+      meetingPrice,
       meetingDuration,
+      selectedFieldIndex,
+      numberOfPeople,
     });
 
     const savedMeeting = await newMeeting.save();
@@ -93,21 +107,21 @@ Długość wizyty: ${meetingDuration} minut`);
     );
 
     if (hoursInConflict.length) {
-      console.log("Konflikt. Próba usunięcia wstępnie dodanego spotkania.");
+      console.log("Conflict. Attempting to delete the preliminary entry.");
 
       const result = await Meetings.deleteOne({ _id: savedMeeting._id });
       if (result.ok === 1) {
         console.log(
-          "Wstępnie dodane spotkanie zostało usunięte, bo było w konflikcie z godzinami przyjęć lub innymi spotkaniami."
+          "Preliminary entry has been deleted, because it was in conflict with opening hours or other meetings."
         );
       } else {
-        console.log("Error while deleting new meeting");
+        console.log("Error while deleting the preliminary entry.");
         res.status(500).json({ success: false });
       }
 
       res.status(409).json({ success: false });
     } else {
-      console.log("Brak konfliktu, termin zapisany");
+      console.log("No conflict. Meeting saved.");
       res.cookie("meetingID", savedMeeting._id, {
         maxAge: 1000 * 60 * 60,
         httpOnly: true,
@@ -123,15 +137,39 @@ Długość wizyty: ${meetingDuration} minut`);
 });
 // /\ BOOK MEETING /\
 
-// \/ SUMMARY \/
-router.patch("/summary", async (req, res) => {
-  const { id } = req.query;
+// \/ DELETE MEETING \/
+router.delete("/meetings/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.query;
+
+  if (status === "temp") {
+    try {
+      const result = await Meetings.deleteOne({ _id: id });
+      if (result.ok === 1) {
+        console.log("Successfully deleted temp meeting id", id);
+        res.status(200).json({ success: true });
+      } else {
+        console.log("Error while deleting temp meeting id", id);
+        res.status(404).json({ success: false });
+      }
+    } catch (error) {}
+  } else {
+    res.status(400).json({ success: false });
+  }
+});
+// /\ DELETE MEETING /\
+
+// \/ PAYMENT IN PERSON \/
+router.patch("/meetings/:id/in-person", async (req, res) => {
+  console.log(req.originalUrl);
+
+  const { id } = req.params;
 
   console.log("Saving summary for meeting id:", id);
 
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findById(req.query.id);
+    const meeting = await Meetings.findById(id);
 
     meeting.meetingDetails = { ...req.body };
     meeting.status = "unpaid";
@@ -158,7 +196,7 @@ router.patch("/summary", async (req, res) => {
     res.status(500).json({ success: false });
   }
 });
-// /\ SUMMARY /\
+// /\ PAYMENT IN PERSON /\
 
 // \/ EMAIL DELIVERED \/
 router.post("/delivered", async (req, res) => {
@@ -191,5 +229,84 @@ router.post("/delivered", async (req, res) => {
   }
 });
 // /\ EMAIL DELIVERED /\
+
+// \/ PRZELEWY24 \/
+router.patch("/meetings/:id/p24", async (req, res) => {
+  console.log(req.originalUrl);
+
+  const { id } = req.params;
+  // const meetingDetails = req.body;
+  console.log("Saving summary for meeting id:", id);
+
+  try {
+    // \/ GETTING AND UPDATING DATA FROM DB \/
+    const meeting = await Meetings.findById(id);
+
+    meeting.meetingDetails = { ...req.body };
+    meeting.status = "unpaid";
+
+    await meeting.save();
+    // /\ GETTING AND UPDATING DATA FROM DB /\
+
+    // \/ CHECKING DATA SAVED IN DB \/
+    const checkedMeeting = await Meetings.findOne({
+      _id: id,
+      status: "unpaid",
+    });
+    // /\ CHECKING DATA SAVED IN DB /\
+
+    const trnRequestURL = await przelewy24(id, checkedMeeting);
+
+    res.status(301).json({ success: true, url: trnRequestURL });
+  } catch (error) {
+    console.log("Error", error);
+    res.status(500).json({ success: false });
+  }
+});
+// /\ PRZELEWY24 /\
+
+// \/ PRZELEWY24 STATUS \/
+router.post("/meeting/p24status", async (req, res) => {
+  const {
+    p24_session_id: id,
+    p24_amount,
+    p24_currency,
+    p24_order_id,
+    p24_method,
+    p24_statement,
+    p24_sign,
+  } = req.query;
+
+  console.log("Successful payment for meeting id:", id);
+
+  try {
+    // \/ GETTING AND UPDATING DATA FROM DB \/
+    const meeting = await Meetings.findById(req.query.id);
+
+    meeting.status = "paid";
+
+    const updatedMeeting = await meeting.save();
+    // /\ GETTING AND UPDATING DATA FROM DB /\
+
+    const messageId = await emailSender(updatedMeeting);
+
+    // \/ GETTING AND UPDATING DATA FROM DB \/
+    const checkedMeeting = await Meetings.findOne({
+      _id: id,
+      status: "paid",
+    });
+
+    checkedMeeting.emailDetails = { messageId };
+
+    await checkedMeeting.save();
+    // /\ GETTING AND UPDATING DATA FROM DB /\
+
+    res.status(201).json({ success: true });
+  } catch (error) {
+    console.log("Error", error);
+    res.status(500).json({ success: false });
+  }
+});
+// /\ PRZELEWY24 STATUS /\
 
 module.exports = router;

@@ -15,6 +15,7 @@
   "test": "echo \"Error: no test specified\" && exit 1"
  },
  "dependencies": {
+  "@ingameltd/node-przelewy24": "^1.1.0",
   "body-parser": "^1.19.0",
   "cookie-parser": "^1.4.5",
   "cookie-session": "^1.4.0",
