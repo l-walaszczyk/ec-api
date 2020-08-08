@@ -126,7 +126,7 @@ Duration: ${meetingDuration} minutes`);
       console.log("No conflict. Meeting saved.");
       res.cookie("meetingID", savedMeeting._id, {
         maxAge: 1000 * 60 * 60,
-        httpOnly: true,
+        httpOnly: false,
         sameSite: "none",
         secure: true,
       });

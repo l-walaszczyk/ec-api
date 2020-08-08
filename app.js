@@ -3,7 +3,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const config = require("./config/config");
 // const cookieSession = require("cookie-session");
-const cookieParser = require("cookie-parser");
+// const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 
 // \/ CONNECTION WITH DATABASE \/
@@ -21,7 +21,7 @@ db.once("open", () => {
 
 const app = express();
 
-app.use(cookieParser());
+// app.use(cookieParser());
 app.use(bodyParser.json());
 
 app.use((req, res, next) => {
