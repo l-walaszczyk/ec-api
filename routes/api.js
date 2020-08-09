@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const moment = require("moment");
-// const Rules = require("../models/rules");
-// const Overrides = require("../models/overrides");
 const Meetings = require("../models/meetings");
 const purgeTempMeetings = require("../functions/purgeTempMeetings");
 const getWeekArray = require("../functions/getWeekArray");
@@ -11,6 +9,7 @@ const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
 const przelewy24 = require("../functions/przelewy24");
+const url = require("url");
 require("dotenv").config();
 
 // \/ PURGE TEMP MEETINGS \/
@@ -25,8 +24,6 @@ router.get("/purge", async (req, res) => {
 router.get("/hours", async (req, res) => {
   const { direction, meetingDuration, date: dateQuery, id } = req.query;
   console.log(req.originalUrl);
-
-  // console.log("Cookies: ", req.cookies);
 
   try {
     const [array, success] = await getWeekArray(
@@ -164,12 +161,12 @@ router.delete("/meetings/:id", async (req, res) => {
 // \/ GET MEETING \/
 router.get("/meetings/:id", async (req, res) => {
   const { id } = req.params;
+  console.log(req.originalUrl);
 
   try {
     // const savedMeeting = await Meetings.findOne({ _id: id, status: "temp" });
     const savedMeeting = await Meetings.findById(id);
     if (savedMeeting) {
-      console.log(savedMeeting);
       res.status(200).json({ success: true, savedMeeting });
     } else {
       console.log("Could not find a temp meeting of id", id);
@@ -257,6 +254,12 @@ router.post("/delivered", async (req, res) => {
 router.patch("/meetings/:id/p24", async (req, res) => {
   console.log(req.originalUrl);
 
+  const urlUI = req.headers.origin;
+  console.log(urlUI);
+
+  const urlAPI = req.protocol + "://" + req.headers.host;
+  console.log(urlAPI);
+
   const { id } = req.params;
   // const meetingDetails = req.body;
   console.log("Saving summary for meeting id:", id);
@@ -278,7 +281,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
     });
     // /\ CHECKING DATA SAVED IN DB /\
 
-    const trnRequestURL = await przelewy24(id, checkedMeeting);
+    const trnRequestURL = await przelewy24(urlUI, urlAPI, id, checkedMeeting);
 
     res.status(301).json({ success: true, url: trnRequestURL });
   } catch (error) {

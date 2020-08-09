@@ -6,11 +6,13 @@ const {
   // TransactionVerification,
 } = require("@ingameltd/node-przelewy24");
 require("dotenv").config();
-const {
-  allowedOrigins: [urlUI],
-} = require("../config/config");
+// const {
+//   allowedOrigins: [urlUI],
+// } = require("../config/config");
 
 const przelewy24 = async (
+  urlUI,
+  urlAPI,
   id,
   {
     meetingName,
@@ -43,7 +45,7 @@ const przelewy24 = async (
     p24_email: emailContact, // customer's email
     p24_session_id: id, // a unique id from merchant's system
     p24_url_return: urlUI + "/umow-spotkanie?" + new URLSearchParams(params), // return user to following url after a valid transaction
-    p24_url_status: process.env.API_URL + "p24status", //?" + new URLSearchParams(params),
+    p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
     p24_transfer_label: `${firstName} ${lastName}`,
     p24_encoding: "UTF-8",
     p24_name_1: meetingName,
