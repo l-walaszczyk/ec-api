@@ -26,7 +26,7 @@ router.get("/hours", async (req, res) => {
   const { direction, meetingDuration, date: dateQuery, id } = req.query;
   console.log(req.originalUrl);
 
-  console.log("Cookies: ", req.cookies);
+  // console.log("Cookies: ", req.cookies);
 
   try {
     const [array, success] = await getWeekArray(
@@ -124,12 +124,12 @@ Duration: ${meetingDuration} minutes`);
       res.status(409).json({ success: false });
     } else {
       console.log("No conflict. Meeting saved.");
-      res.cookie("meetingID", savedMeeting._id, {
-        maxAge: 1000 * 60 * 60,
-        httpOnly: false,
-        sameSite: "none",
-        secure: true,
-      });
+      // res.cookie("meetingID", savedMeeting._id, {
+      //   maxAge: 1000 * 60 * 60,
+      //   httpOnly: false,
+      //   sameSite: "none",
+      //   secure: true,
+      // });
       res.status(201).json({ success: true, savedMeeting });
     }
   } catch (error) {
@@ -160,6 +160,27 @@ router.delete("/meetings/:id", async (req, res) => {
   }
 });
 // /\ DELETE MEETING /\
+
+// \/ GET MEETING \/
+router.get("/meetings/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // const savedMeeting = await Meetings.findOne({ _id: id, status: "temp" });
+    const savedMeeting = await Meetings.findById(id);
+    if (savedMeeting) {
+      console.log(savedMeeting);
+      res.status(200).json({ success: true, savedMeeting });
+    } else {
+      console.log("Could not find a temp meeting of id", id);
+      res.status(404).json({ success: false });
+    }
+  } catch (error) {
+    console.log("Error", error);
+    res.status(500).json({ success: false });
+  }
+});
+// /\ GET MEETING /\
 
 // \/ PAYMENT IN PERSON \/
 router.patch("/meetings/:id/in-person", async (req, res) => {
@@ -192,7 +213,7 @@ router.patch("/meetings/:id/in-person", async (req, res) => {
     await checkedMeeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\
 
-    res.status(201).json({ success: true });
+    res.status(201).json({ success: true, savedMeeting: checkedMeeting });
   } catch (error) {
     console.log("Error", error);
     res.status(500).json({ success: false });
