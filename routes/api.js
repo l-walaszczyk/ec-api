@@ -257,7 +257,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
   const urlUI = req.headers.origin;
   console.log(urlUI);
 
-  const urlAPI = req.protocol + "://" + req.headers.host;
+  const urlAPI = req.protocol + "://" + req.headers.host + "/api";
   console.log(urlAPI);
 
   const { id } = req.params;
