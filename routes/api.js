@@ -297,7 +297,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 
 // \/ PRZELEWY24 STATUS \/
 router.post("/p24status", async (req, res) => {
-  const { p24_session_id: id, p24_order_id, p24_statement } = req.query;
+  const { p24_session_id: id, p24_order_id, p24_statement } = req.body;
 
   console.log("Successful payment for meeting id:", id);
 
