@@ -30,8 +30,19 @@ const przelewy24 = async (
   const connTestResult = await p24.testConnection();
   console.log(connTestResult ? "P24 connection ok" : "P24 connection failed");
 
-  const firstName = firstNameContact;
-  const lastName = lastNameContact;
+  let transferLabel = `${firstNameContact} ${lastNameContact}`;
+
+  if (transferLabel.length > 20) {
+    transferLabel = `${firstNameContact[0]}. ${lastNameContact}`;
+  }
+  if (transferLabel.length > 20) {
+    transferLabel = lastNameContact;
+  }
+  if (transferLabel.length > 20) {
+    transferLabel = transferLabel.slice(0, 19);
+  }
+
+  console.log(transferLabel);
 
   const params = {
     id,
@@ -46,7 +57,7 @@ const przelewy24 = async (
     p24_session_id: id, // a unique id from merchant's system
     p24_url_return: urlUI + "/umow-spotkanie?" + new URLSearchParams(params), // return user to following url after a valid transaction
     p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
-    p24_transfer_label: `${firstName} ${lastName}`,
+    p24_transfer_label: transferLabel,
     p24_encoding: "UTF-8",
     p24_name_1: meetingName,
     p24_quantity_1: 1,

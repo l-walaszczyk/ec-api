@@ -189,7 +189,7 @@ router.patch("/meetings/:id/in-person", async (req, res) => {
 
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findById(id);
+    const meeting = await Meetings.findOne({ _id: id, status: "temp" });
 
     meeting.meetingDetails = { ...req.body };
     meeting.status = "unpaid";
@@ -266,7 +266,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findById(id);
+    const meeting = await Meetings.findOne({ _id: id, status: "temp" });
 
     meeting.meetingDetails = { ...req.body };
     meeting.status = "unpaid";
