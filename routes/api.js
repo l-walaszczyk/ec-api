@@ -296,24 +296,20 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 // /\ PRZELEWY24 /\
 
 // \/ PRZELEWY24 STATUS \/
-router.post("/meeting/p24status", async (req, res) => {
-  const {
-    p24_session_id: id,
-    p24_amount,
-    p24_currency,
-    p24_order_id,
-    p24_method,
-    p24_statement,
-    p24_sign,
-  } = req.query;
+router.post("/p24status", async (req, res) => {
+  const { p24_session_id: id, p24_order_id, p24_statement } = req.query;
 
   console.log("Successful payment for meeting id:", id);
 
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findById(req.query.id);
+    const meeting = await Meetings.findOne({
+      _id: id,
+      status: "unpaid",
+    });
 
     meeting.status = "paid";
+    meeting.p24Details = { p24_order_id, p24_statement };
 
     const updatedMeeting = await meeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\

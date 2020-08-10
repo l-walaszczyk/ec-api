@@ -50,12 +50,12 @@ const przelewy24 = async (
 
   const paymentParam = {
     p24_amount: meetingPrice * 100, // 100.00PLN -> 10000
-    p24_country: "PL", // set country codes
-    p24_currency: "PLN", // set currency
-    p24_description: meetingName, // set description
-    p24_email: emailContact, // customer's email
-    p24_session_id: id, // a unique id from merchant's system
-    p24_url_return: urlUI + "/umow-spotkanie?" + new URLSearchParams(params), // return user to following url after a valid transaction
+    p24_country: "PL",
+    p24_currency: "PLN",
+    p24_description: meetingName,
+    p24_email: emailContact,
+    p24_session_id: id,
+    p24_url_return: urlUI + "/umow-spotkanie?" + new URLSearchParams(params),
     p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
     p24_transfer_label: transferLabel,
     p24_encoding: "UTF-8",
@@ -64,8 +64,12 @@ const przelewy24 = async (
     p24_price_1: meetingPrice,
   };
 
+  console.log(p24_url_status);
+
   const trnRequestURL = await p24.getPaymentLink(new Payment(paymentParam));
+
   console.log(trnRequestURL);
+
   return trnRequestURL;
 };
 
