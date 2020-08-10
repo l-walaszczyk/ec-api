@@ -1,14 +1,5 @@
-const {
-  Przelewy24,
-  Payment,
-  // PaymentOptions,
-  // ShoppingDetail,
-  // TransactionVerification,
-} = require("@ingameltd/node-przelewy24");
+const { Przelewy24, Payment } = require("@ingameltd/node-przelewy24");
 require("dotenv").config();
-// const {
-//   allowedOrigins: [urlUI],
-// } = require("../config/config");
 
 const przelewy24 = async (
   urlUI,
@@ -59,9 +50,9 @@ const przelewy24 = async (
     p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
     p24_transfer_label: transferLabel,
     p24_encoding: "UTF-8",
-    p24_name_1: meetingName,
-    p24_quantity_1: 1,
-    p24_price_1: meetingPrice,
+    // p24_name_1: meetingName,
+    // p24_quantity_1: 1,
+    // p24_price_1: meetingPrice,
   };
 
   const trnRequestURL = await p24.getPaymentLink(new Payment(paymentParam));

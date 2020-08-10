@@ -9,8 +9,10 @@ const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
 const przelewy24 = require("../functions/przelewy24");
-const url = require("url");
 require("dotenv").config();
+const { Przelewy24 } = require("@ingameltd/node-przelewy24");
+
+const p24 = new Przelewy24(MERCHANT_ID, POS_ID, SALT, TEST_MODE);
 
 // \/ PURGE TEMP MEETINGS \/
 router.get("/purge", async (req, res) => {
@@ -297,18 +299,36 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 
 // \/ PRZELEWY24 STATUS \/
 router.post("/p24status", async (req, res) => {
-  console.log(req.body);
-  console.log(req.originalUrl);
-  console.log(req.host);
-  console.log(req.headers);
-  res.header("Access-Control-Allow-Credentials", true);
-  res.status(200);
-  /* 
-  const { p24_session_id: id, p24_order_id, p24_statement } = req.body;
+  // console.log(req.body);
+  // console.log(req.originalUrl);
+  // console.log(req.host);
+  // console.log(req.headers);
+  // res.header("Access-Control-Allow-Credentials", true);
+  // res.status(200);
+
+  const {
+    p24_session_id: id,
+    p24_amount,
+    p24_currency,
+    p24_order_id,
+    p24_sign,
+    p24_statement,
+  } = req.body;
 
   console.log("Successful payment for meeting id:", id);
 
+  const verification = {
+    p24_session_id: id,
+    p24_amount,
+    p24_currency,
+    p24_order_id,
+    p24_sign,
+  };
+
   try {
+    const result = await p24.verifyTransaction(verification);
+    console.log("Verification successful:", result);
+
     // \/ GETTING AND UPDATING DATA FROM DB \/
     const meeting = await Meetings.findOne({
       _id: id,
@@ -338,7 +358,7 @@ router.post("/p24status", async (req, res) => {
   } catch (error) {
     console.log("Error", error);
     res.status(500).json({ success: false });
-  }*/
+  }
 });
 // /\ PRZELEWY24 STATUS /\
 
