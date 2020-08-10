@@ -12,6 +12,10 @@ const przelewy24 = require("../functions/przelewy24");
 require("dotenv").config();
 const { Przelewy24 } = require("@ingameltd/node-przelewy24");
 
+const MERCHANT_ID = process.env.P24_ID;
+const POS_ID = MERCHANT_ID;
+const SALT = process.env.P24_CRC;
+const TEST_MODE = true;
 const p24 = new Przelewy24(MERCHANT_ID, POS_ID, SALT, TEST_MODE);
 
 // \/ PURGE TEMP MEETINGS \/
