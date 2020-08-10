@@ -283,13 +283,11 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 
     const trnRequestURL = await przelewy24(urlUI, urlAPI, id, checkedMeeting);
 
-    res
-      .status(301)
-      .json({
-        success: true,
-        savedMeeting: checkedMeeting,
-        url: trnRequestURL,
-      });
+    res.status(200).json({
+      success: true,
+      savedMeeting: checkedMeeting,
+      url: trnRequestURL,
+    });
   } catch (error) {
     console.log("Error", error);
     res.status(500).json({ success: false });

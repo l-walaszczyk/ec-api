@@ -27,9 +27,10 @@ app.use(bodyParser.json());
 app.use((req, res, next) => {
   if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
-  } else {
-    res.setHeader("Access-Control-Allow-Origin", "*");
   }
+  // else {
+  //   res.setHeader("Access-Control-Allow-Origin", "*");
+  // }
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
   res.header(
