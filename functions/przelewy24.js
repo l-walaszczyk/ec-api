@@ -64,8 +64,6 @@ const przelewy24 = async (
     p24_price_1: meetingPrice,
   };
 
-  console.log(p24_url_status);
-
   const trnRequestURL = await p24.getPaymentLink(new Payment(paymentParam));
 
   console.log(trnRequestURL);
