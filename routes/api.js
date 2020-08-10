@@ -298,6 +298,11 @@ router.patch("/meetings/:id/p24", async (req, res) => {
 // \/ PRZELEWY24 STATUS \/
 router.post("/p24status", async (req, res) => {
   console.log(req.body);
+  console.log(req.originalUrl);
+  console.log(req.host);
+  console.log(req.headers);
+  res.header("Access-Control-Allow-Credentials", true);
+  res.status(200);
   /* 
   const { p24_session_id: id, p24_order_id, p24_statement } = req.body;
 
@@ -334,7 +339,6 @@ router.post("/p24status", async (req, res) => {
     console.log("Error", error);
     res.status(500).json({ success: false });
   }*/
-  res.status(201).json({ success: true });
 });
 // /\ PRZELEWY24 STATUS /\
 
