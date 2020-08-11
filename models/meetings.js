@@ -22,6 +22,7 @@ const meetingsSchema = new Schema({
   },
   numberOfPeople: { type: Number },
   creationDate: { type: Date, default: Date.now },
+  // renewalDate: { type: Date },
   meetingDetails: { type: Object },
   emailDetails: { type: Object },
   p24Details: { type: Object },

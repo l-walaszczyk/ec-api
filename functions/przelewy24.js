@@ -50,6 +50,8 @@ const przelewy24 = async (
     p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
     p24_transfer_label: transferLabel,
     p24_encoding: "UTF-8",
+    p24_time_limit: 15,
+    p24_wait_for_result: 1,
     // p24_name_1: meetingName,
     // p24_quantity_1: 1,
     // p24_price_1: meetingPrice,
