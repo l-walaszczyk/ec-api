@@ -69,7 +69,7 @@ const emailSender = async ({
                  }</li>`
                : `<li>Zapisana osoba: ${firstNameContact} ${lastNameContact}</li>`
            }
-           <li>Nr. telefonu osoby kontaktowej: ${phoneContact}</li>
+           <li>Nr. telefonu: ${phoneContact}</li>
            <li>Rodzaj spotkania: ${meetingName}</li>
            <li>Data: ${meetingDateLocal.format("dddd, D MMMM YYYY")}</li>
            <li>Godzina: ${meetingDateLocal.format("HH:mm")}</li>
