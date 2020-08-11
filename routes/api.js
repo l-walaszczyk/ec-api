@@ -9,6 +9,8 @@ const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
 // const getP24RequestURL = require("../functions/getP24RequestURL");
+const handleInPersonPayment = require("../functions/handleInPersonPayment");
+const handleP24Payment = require("../functions/handleP24Payment");
 require("dotenv").config();
 const { Przelewy24 } = require("@ingameltd/node-przelewy24");
 
