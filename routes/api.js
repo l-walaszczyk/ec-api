@@ -302,7 +302,7 @@ router.post("/p24status", async (req, res) => {
     const meeting = await Meetings.findOne({
       _id: id,
       status: "temp",
-      meetingDetails: { paymentMethod: "p24" },
+      "meetingDetails.paymentMethod": "p24",
     });
 
     meeting.status = "paid";
