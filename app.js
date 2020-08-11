@@ -38,10 +38,10 @@ app.use((req, res, next) => {
   // }
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
-  // res.header(
-  //   "Access-Control-Allow-Methods",
-  //   "GET,PUT,POST,DELETE,PATCH,OPTIONS"
-  // );
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET,PUT,POST,DELETE,PATCH,OPTIONS"
+  );
   res.header("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
   res.header("Pragma", "no-cache"); // HTTP 1.0.
   next();
