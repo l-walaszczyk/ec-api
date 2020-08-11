@@ -30,15 +30,11 @@ app.use(
 );
 
 app.use((req, res, next) => {
-  // if (config.allowedOrigins.indexOf(req.headers.origin) > -1) {
-  //   res.setHeader("Access-Control-Allow-Origin", req.headers.origin);
-  // } else {
-  //   res.setHeader("Access-Control-Allow-Origin", "*");
-  // }
-
-  res.setHeader("Access-Control-Allow-Origin", "*");
-  // console.log("req.headers.origin", req.headers.origin);
-
+  if (config.allowedOrigins.includes(req.headers.origin)) {
+    res.header("Access-Control-Allow-Origin", req.headers.origin);
+  } else {
+    res.header("Access-Control-Allow-Origin", "*");
+  }
   res.header("Access-Control-Allow-Credentials", true);
   res.header("Access-Control-Allow-Headers", "Origin, Content-Type, Accept");
   res.header(
