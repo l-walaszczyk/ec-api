@@ -12,18 +12,22 @@ const handleInPersonPayment = async (id, meetingDetails, res) => {
     const updatedMeeting = await meeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\
 
-    const messageId = await emailSender(updatedMeeting);
+    try {
+      const messageId = await emailSender(updatedMeeting);
 
-    // \/ GETTING AND UPDATING DATA FROM DB \/
-    const checkedMeeting = await Meetings.findOne({
-      _id: id,
-      status: "unpaid",
-    });
+      // \/ GETTING AND UPDATING DATA FROM DB \/
+      const checkedMeeting = await Meetings.findOne({
+        _id: id,
+        status: "unpaid",
+      });
 
-    checkedMeeting.emailDetails = { messageId };
+      checkedMeeting.emailDetails = { messageId };
 
-    await checkedMeeting.save();
-    // /\ GETTING AND UPDATING DATA FROM DB /\
+      await checkedMeeting.save();
+      // /\ GETTING AND UPDATING DATA FROM DB /\
+    } catch (error) {
+      console.log("Error", error);
+    }
 
     res.status(201).json({ success: true, savedMeeting: checkedMeeting });
   } catch (error) {

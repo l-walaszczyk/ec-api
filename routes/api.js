@@ -8,7 +8,6 @@ const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
-// const getP24RequestURL = require("../functions/getP24RequestURL");
 const handleInPersonPayment = require("../functions/handleInPersonPayment");
 const handleP24Payment = require("../functions/handleP24Payment");
 require("dotenv").config();
@@ -129,12 +128,6 @@ Duration: ${meetingDuration} minutes`);
       res.status(409).json({ success: false });
     } else {
       console.log("No conflict. Meeting saved.");
-      // res.cookie("meetingID", savedMeeting._id, {
-      //   maxAge: 1000 * 60 * 60,
-      //   httpOnly: false,
-      //   sameSite: "none",
-      //   secure: true,
-      // });
       res.status(201).json({ success: true, savedMeeting });
     }
   } catch (error) {
@@ -217,96 +210,6 @@ router.patch("/meetings/:id", async (req, res) => {
 });
 // /\ FINAL-BOOK MEETING /\
 
-// \/ PAYMENT IN PERSON \/
-// router.patch("/meetings/:id/in-person", async (req, res) => {
-//   console.log(req.originalUrl);
-
-//   const { id } = req.params;
-
-//   console.log("Saving summary for meeting id:", id);
-
-//   try {
-//     // \/ GETTING AND UPDATING DATA FROM DB \/
-//     const meeting = await Meetings.findOne({ _id: id, status: "temp" });
-
-//     meeting.meetingDetails = { ...req.body };
-//     meeting.status = "unpaid";
-
-//     const updatedMeeting = await meeting.save();
-//     // /\ GETTING AND UPDATING DATA FROM DB /\
-
-//     const messageId = await emailSender(updatedMeeting);
-
-//     // \/ GETTING AND UPDATING DATA FROM DB \/
-//     const checkedMeeting = await Meetings.findOne({
-//       _id: id,
-//       status: "unpaid",
-//     });
-
-//     checkedMeeting.emailDetails = { messageId };
-
-//     await checkedMeeting.save();
-//     // /\ GETTING AND UPDATING DATA FROM DB /\
-
-//     res.status(201).json({ success: true, savedMeeting: checkedMeeting });
-//   } catch (error) {
-//     console.log("Error", error);
-//     res.status(500).json({ success: false });
-//   }
-// });
-// /\ PAYMENT IN PERSON /\
-
-// \/ PRZELEWY24 \/
-// router.patch("/meetings/:id/p24", async (req, res) => {
-//   console.log(req.originalUrl);
-
-//   const urlUI = req.headers.origin;
-//   const urlAPI = req.protocol + "://" + req.headers.host + "/api";
-//   const { id } = req.params;
-
-//   console.log("Saving summary for meeting id:", id);
-//   const momentNowUTC = moment.utc().toDate();
-
-//   try {
-//     // \/ GETTING AND UPDATING DATA FROM DB \/
-//     const meeting = await Meetings.findOne({ _id: id, status: "temp" });
-
-//     meeting.meetingDetails = { ...req.body };
-//     meeting.creationDate = momentNowUTC;
-
-//     await meeting.save();
-//     // /\ GETTING AND UPDATING DATA FROM DB /\
-
-//     // \/ CHECKING DATA SAVED IN DB \/
-//     const checkedMeeting = await Meetings.findOne({
-//       _id: id,
-//       status: "temp",
-//       creationDate: momentNowUTC,
-//       "meetingDetails.paymentMethod": "p24",
-//     });
-//     // /\ CHECKING DATA SAVED IN DB /\
-
-//     // requesting url from p24 to redirect the client
-//     const trnRequestURL = await getP24RequestURL(
-//       p24,
-//       urlUI,
-//       urlAPI,
-//       id,
-//       checkedMeeting
-//     );
-
-//     res.status(200).json({
-//       success: true,
-//       // savedMeeting: checkedMeeting,
-//       url: trnRequestURL,
-//     });
-//   } catch (error) {
-//     console.log("Error", error);
-//     res.status(500).json({ success: false });
-//   }
-// });
-// /\ PRZELEWY24 /\
-
 // \/ PRZELEWY24 STATUS \/
 router.post("/p24status", async (req, res) => {
   const {
@@ -345,18 +248,22 @@ router.post("/p24status", async (req, res) => {
     const updatedMeeting = await meeting.save();
     // /\ GETTING AND UPDATING DATA FROM DB /\
 
-    const messageId = await emailSender(updatedMeeting);
+    try {
+      const messageId = await emailSender(updatedMeeting);
 
-    // \/ GETTING AND UPDATING DATA FROM DB \/
-    const checkedMeeting = await Meetings.findOne({
-      _id: id,
-      status: "paid",
-    });
+      // \/ GETTING AND UPDATING DATA FROM DB \/
+      const checkedMeeting = await Meetings.findOne({
+        _id: id,
+        status: "paid",
+      });
 
-    checkedMeeting.emailDetails = { messageId };
+      checkedMeeting.emailDetails = { messageId };
 
-    await checkedMeeting.save();
-    // /\ GETTING AND UPDATING DATA FROM DB /\
+      await checkedMeeting.save();
+      // /\ GETTING AND UPDATING DATA FROM DB /\
+    } catch (error) {
+      console.log("Error", error);
+    }
 
     res.status(201).send();
   } catch (error) {
