@@ -140,21 +140,18 @@ Duration: ${meetingDuration} minutes`);
 // \/ DELETE MEETING \/
 router.delete("/meetings/:id", async (req, res) => {
   const { id } = req.params;
-  const { status } = req.query;
+  // const { status } = req.query;
 
-  if (status === "temp") {
-    try {
-      const result = await Meetings.deleteOne({ _id: id });
-      if (result.ok === 1) {
-        console.log("Successfully deleted temp meeting id", id);
-        res.status(200).json({ success: true });
-      } else {
-        console.log("Error while deleting temp meeting id", id);
-        res.status(404).json({ success: false });
-      }
-    } catch (error) {}
-  } else {
-    res.status(400).json({ success: false });
+  try {
+    const result = await Meetings.deleteOne({ _id: id, status: "temp" });
+    if (result.ok === 1) {
+      console.log("Successfully deleted temp meeting id", id);
+      res.status(200).json({ success: true });
+    } else {
+      throw new Error(`Could not delete a meeting id ${id}`);
+    }
+  } catch (error) {
+    res.status(404).json({ success: false });
   }
 });
 // /\ DELETE MEETING /\
@@ -212,6 +209,8 @@ router.patch("/meetings/:id", async (req, res) => {
 
 // \/ PRZELEWY24 STATUS \/
 router.post("/p24status", async (req, res) => {
+  res.header("Access-Control-Allow-Origin", "*");
+
   const {
     p24_session_id: id,
     p24_amount,
