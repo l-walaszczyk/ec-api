@@ -237,7 +237,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
   const { id } = req.params;
 
   console.log("Saving summary for meeting id:", id);
-  const momentNowUTC = moment.utc();
+  const momentNowUTC = moment.utc().toDate();
 
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
@@ -254,7 +254,7 @@ router.patch("/meetings/:id/p24", async (req, res) => {
       _id: id,
       status: "temp",
       creationDate: momentNowUTC,
-      meetingDetails: { paymentMethod: "p24" },
+      "meetingDetails.paymentMethod": "p24",
     });
     // /\ CHECKING DATA SAVED IN DB /\
 
