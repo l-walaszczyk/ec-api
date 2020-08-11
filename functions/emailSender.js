@@ -80,8 +80,8 @@ const emailSender = async ({
            </ul>
           
            ${
-             selectedFieldIndex === 1 &&
-             `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
+             selectedFieldIndex === 1
+               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
              w materiałach do pobrania na mojej stronie i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczenie osobiście podczas wizyty w gabinecie.</p>
 
              <p>Bardzo proszę także o wypełnienie i odesłanie zgody rodzica/opiekuna na wizytę dziecka/nastolatka.</p>
@@ -97,6 +97,7 @@ const emailSender = async ({
              <li><a href="https://emiliacwojdzinska.pl/docs/Zgoda%20opiekuna.doc">plik w formacie .doc (jeśli wypełniamy na komputerze)</a></li>
              <li><a href="https://emiliacwojdzinska.pl/docs/Zgoda%20opiekuna.pdf">plik w formacie .pdf (jeśli drukujemy i wypełniamy ręcznie)</a></li>
              </ul>`
+               : ""
            }
 
            <p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>
