@@ -25,11 +25,11 @@ const handleInPersonPayment = async (id, meetingDetails, res) => {
 
       await checkedMeeting.save();
       // /\ GETTING AND UPDATING DATA FROM DB /\
+      res.status(201).json({ success: true, savedMeeting: checkedMeeting });
     } catch (error) {
       console.log("Error", error);
+      res.status(201).json({ success: true, savedMeeting: updatedMeeting });
     }
-
-    res.status(201).json({ success: true, savedMeeting: checkedMeeting });
   } catch (error) {
     console.log("Error", error);
     res.status(500).json({ success: false });
