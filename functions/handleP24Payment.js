@@ -2,7 +2,14 @@ const moment = require("moment");
 const Meetings = require("../models/meetings");
 const getP24RequestURL = require("../functions/getP24RequestURL");
 
-const handleP24Payment = async (id, meetingDetails, p24, urlUI, urlAPI) => {
+const handleP24Payment = async (
+  id,
+  meetingDetails,
+  p24,
+  urlUI,
+  urlAPI,
+  res
+) => {
   const momentNowUTC = moment.utc().toDate();
 
   try {

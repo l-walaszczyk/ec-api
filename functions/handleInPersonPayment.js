@@ -1,7 +1,7 @@
 const Meetings = require("../models/meetings");
 const emailSender = require("../functions/emailSender");
 
-const handleInPersonPayment = async (id, meetingDetails) => {
+const handleInPersonPayment = async (id, meetingDetails, res) => {
   try {
     // \/ GETTING AND UPDATING DATA FROM DB \/
     const meeting = await Meetings.findOne({ _id: id, status: "temp" });

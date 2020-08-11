@@ -199,12 +199,12 @@ router.patch("/meetings/:id", async (req, res) => {
     const { paymentMethod } = meetingDetails;
 
     if (paymentMethod === "in-person") {
-      handleInPersonPayment(id, meetingDetails);
+      handleInPersonPayment(id, meetingDetails, res);
     } else if (paymentMethod === "p24") {
       const urlUI = req.headers.origin;
       const urlAPI = req.protocol + "://" + req.headers.host + "/api";
 
-      handleP24Payment(id, meetingDetails, p24, urlUI, urlAPI);
+      handleP24Payment(id, meetingDetails, p24, urlUI, urlAPI, res);
     } else {
       throw new Error(
         "Neither 'in-person' nor 'p24' payment method has been specified in the request."
