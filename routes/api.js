@@ -8,14 +8,14 @@ const generateHours = require("../functions/generateHours");
 const getHoursFromMeetings = require("../functions/getHoursFromMeetings");
 const getRulesAndMeetingsFromDB = require("../functions/getRulesAndMeetingsFromDB");
 const emailSender = require("../functions/emailSender");
-const przelewy24 = require("../functions/przelewy24");
+// const getP24RequestURL = require("../functions/getP24RequestURL");
 require("dotenv").config();
 const { Przelewy24 } = require("@ingameltd/node-przelewy24");
 
 const MERCHANT_ID = process.env.P24_ID;
 const POS_ID = MERCHANT_ID;
 const SALT = process.env.P24_CRC;
-const TEST_MODE = true;
+const TEST_MODE = process.env.P24_TEST === "true" ? true : false;
 const p24 = new Przelewy24(MERCHANT_ID, POS_ID, SALT, TEST_MODE);
 
 // \/ PURGE TEMP MEETINGS \/
@@ -46,7 +46,7 @@ router.get("/hours", async (req, res) => {
 });
 // /\ GET WEEK /\
 
-// \/ BOOK MEETING \/
+// \/ TEMP-BOOK MEETING \/
 router.post("/meetings", async (req, res) => {
   const {
     date,
@@ -140,7 +140,7 @@ Duration: ${meetingDuration} minutes`);
     res.status(500).json({ success: false });
   }
 });
-// /\ BOOK MEETING /\
+// /\ TEMP-BOOK MEETING /\
 
 // \/ DELETE MEETING \/
 router.delete("/meetings/:id", async (req, res) => {
@@ -185,92 +185,124 @@ router.get("/meetings/:id", async (req, res) => {
 });
 // /\ GET MEETING /\
 
-// \/ PAYMENT IN PERSON \/
-router.patch("/meetings/:id/in-person", async (req, res) => {
+// \/ FINAL-BOOK MEETING \/
+router.patch("/meetings/:id", async (req, res) => {
   console.log(req.originalUrl);
 
   const { id } = req.params;
-
   console.log("Saving summary for meeting id:", id);
 
   try {
-    // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findOne({ _id: id, status: "temp" });
+    const meetingDetails = { ...req.body };
+    const { paymentMethod } = meetingDetails;
 
-    meeting.meetingDetails = { ...req.body };
-    meeting.status = "unpaid";
+    if (paymentMethod === "in-person") {
+      handleInPersonPayment(id, meetingDetails);
+    } else if (paymentMethod === "p24") {
+      const urlUI = req.headers.origin;
+      const urlAPI = req.protocol + "://" + req.headers.host + "/api";
 
-    const updatedMeeting = await meeting.save();
-    // /\ GETTING AND UPDATING DATA FROM DB /\
-
-    const messageId = await emailSender(updatedMeeting);
-
-    // \/ GETTING AND UPDATING DATA FROM DB \/
-    const checkedMeeting = await Meetings.findOne({
-      _id: id,
-      status: "unpaid",
-    });
-
-    checkedMeeting.emailDetails = { messageId };
-
-    await checkedMeeting.save();
-    // /\ GETTING AND UPDATING DATA FROM DB /\
-
-    res.status(201).json({ success: true, savedMeeting: checkedMeeting });
+      handleP24Payment(id, meetingDetails, p24, urlUI, urlAPI);
+    } else {
+      throw new Error(
+        "Neither 'in-person' nor 'p24' payment method has been specified in the request."
+      );
+    }
   } catch (error) {
     console.log("Error", error);
-    res.status(500).json({ success: false });
+    res.status(400).json({ success: false });
   }
 });
+// /\ FINAL-BOOK MEETING /\
+
+// \/ PAYMENT IN PERSON \/
+// router.patch("/meetings/:id/in-person", async (req, res) => {
+//   console.log(req.originalUrl);
+
+//   const { id } = req.params;
+
+//   console.log("Saving summary for meeting id:", id);
+
+//   try {
+//     // \/ GETTING AND UPDATING DATA FROM DB \/
+//     const meeting = await Meetings.findOne({ _id: id, status: "temp" });
+
+//     meeting.meetingDetails = { ...req.body };
+//     meeting.status = "unpaid";
+
+//     const updatedMeeting = await meeting.save();
+//     // /\ GETTING AND UPDATING DATA FROM DB /\
+
+//     const messageId = await emailSender(updatedMeeting);
+
+//     // \/ GETTING AND UPDATING DATA FROM DB \/
+//     const checkedMeeting = await Meetings.findOne({
+//       _id: id,
+//       status: "unpaid",
+//     });
+
+//     checkedMeeting.emailDetails = { messageId };
+
+//     await checkedMeeting.save();
+//     // /\ GETTING AND UPDATING DATA FROM DB /\
+
+//     res.status(201).json({ success: true, savedMeeting: checkedMeeting });
+//   } catch (error) {
+//     console.log("Error", error);
+//     res.status(500).json({ success: false });
+//   }
+// });
 // /\ PAYMENT IN PERSON /\
 
 // \/ PRZELEWY24 \/
-router.patch("/meetings/:id/p24", async (req, res) => {
-  console.log(req.originalUrl);
+// router.patch("/meetings/:id/p24", async (req, res) => {
+//   console.log(req.originalUrl);
 
-  const urlUI = req.headers.origin;
-  // console.log(urlUI);
+//   const urlUI = req.headers.origin;
+//   const urlAPI = req.protocol + "://" + req.headers.host + "/api";
+//   const { id } = req.params;
 
-  const urlAPI = req.protocol + "://" + req.headers.host + "/api";
-  // console.log(urlAPI);
+//   console.log("Saving summary for meeting id:", id);
+//   const momentNowUTC = moment.utc().toDate();
 
-  const { id } = req.params;
+//   try {
+//     // \/ GETTING AND UPDATING DATA FROM DB \/
+//     const meeting = await Meetings.findOne({ _id: id, status: "temp" });
 
-  console.log("Saving summary for meeting id:", id);
-  const momentNowUTC = moment.utc().toDate();
+//     meeting.meetingDetails = { ...req.body };
+//     meeting.creationDate = momentNowUTC;
 
-  try {
-    // \/ GETTING AND UPDATING DATA FROM DB \/
-    const meeting = await Meetings.findOne({ _id: id, status: "temp" });
+//     await meeting.save();
+//     // /\ GETTING AND UPDATING DATA FROM DB /\
 
-    meeting.meetingDetails = { ...req.body };
-    meeting.creationDate = momentNowUTC;
+//     // \/ CHECKING DATA SAVED IN DB \/
+//     const checkedMeeting = await Meetings.findOne({
+//       _id: id,
+//       status: "temp",
+//       creationDate: momentNowUTC,
+//       "meetingDetails.paymentMethod": "p24",
+//     });
+//     // /\ CHECKING DATA SAVED IN DB /\
 
-    await meeting.save();
-    // /\ GETTING AND UPDATING DATA FROM DB /\
+//     // requesting url from p24 to redirect the client
+//     const trnRequestURL = await getP24RequestURL(
+//       p24,
+//       urlUI,
+//       urlAPI,
+//       id,
+//       checkedMeeting
+//     );
 
-    // \/ CHECKING DATA SAVED IN DB \/
-    const checkedMeeting = await Meetings.findOne({
-      _id: id,
-      status: "temp",
-      creationDate: momentNowUTC,
-      "meetingDetails.paymentMethod": "p24",
-    });
-    // /\ CHECKING DATA SAVED IN DB /\
-
-    // requesting url from p24 to redirect the client
-    const trnRequestURL = await przelewy24(urlUI, urlAPI, id, checkedMeeting);
-
-    res.status(200).json({
-      success: true,
-      savedMeeting: checkedMeeting,
-      url: trnRequestURL,
-    });
-  } catch (error) {
-    console.log("Error", error);
-    res.status(500).json({ success: false });
-  }
-});
+//     res.status(200).json({
+//       success: true,
+//       // savedMeeting: checkedMeeting,
+//       url: trnRequestURL,
+//     });
+//   } catch (error) {
+//     console.log("Error", error);
+//     res.status(500).json({ success: false });
+//   }
+// });
 // /\ PRZELEWY24 /\
 
 // \/ PRZELEWY24 STATUS \/
@@ -356,10 +388,10 @@ router.post("/delivered", async (req, res) => {
       res.status(201).send("created");
     } catch (error) {
       console.log("Error:", error);
-      res.status(500).send("Database error");
+      res.status(500).send();
     }
   } else {
-    res.status(200).send("ok");
+    res.status(200).send();
   }
 });
 // /\ EMAIL DELIVERED /\

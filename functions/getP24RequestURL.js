@@ -1,7 +1,7 @@
-const { Przelewy24, Payment } = require("@ingameltd/node-przelewy24");
-require("dotenv").config();
+const { Payment } = require("@ingameltd/node-przelewy24");
 
-const przelewy24 = async (
+const getP24RequestURL = async (
+  p24,
   urlUI,
   urlAPI,
   id,
@@ -11,13 +11,6 @@ const przelewy24 = async (
     meetingDetails: { firstNameContact, lastNameContact, emailContact },
   }
 ) => {
-  const MERCHANT_ID = process.env.P24_ID;
-  const POS_ID = MERCHANT_ID;
-  const SALT = process.env.P24_CRC;
-  const TEST_MODE = true;
-
-  const p24 = new Przelewy24(MERCHANT_ID, POS_ID, SALT, TEST_MODE);
-
   const connTestResult = await p24.testConnection();
   console.log(connTestResult ? "P24 connection ok" : "P24 connection failed");
 
@@ -50,7 +43,7 @@ const przelewy24 = async (
     p24_url_status: urlAPI + "/p24status", //?" + new URLSearchParams(params),
     p24_transfer_label: transferLabel,
     p24_encoding: "UTF-8",
-    p24_time_limit: 15,
+    p24_time_limit: 20,
     p24_wait_for_result: 1,
     // p24_name_1: meetingName,
     // p24_quantity_1: 1,
@@ -64,4 +57,4 @@ const przelewy24 = async (
   return trnRequestURL;
 };
 
-module.exports = przelewy24;
+module.exports = getP24RequestURL;
