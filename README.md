@@ -23,7 +23,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 You need to have access to a MongoDB database. I recommend trying [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) for free. Please follow instructions on the MongoDB website.
 
-You also need to have a transactional email provider account. I recommend trying [Sendinblue](https://www.sendinblue.com/)
+You also need to have a transactional email provider account. I recommend trying [Sendinblue](https://www.sendinblue.com/).
 
 **It is important that you change the text of the confirmation email so that you do not impersonate and misrepresent Emilia and her practition.** To do that, modify the object (specifically, its `html` property) that is an input to `transporter.sendMail` method which is located in `ec-ui/functions/emailSender.js`. The contents of the confirmation email are within template literals, in the area of lines 50-120.
 
@@ -52,7 +52,7 @@ $ npm run start
 
 ## Link to front-end part of the "ec" project
 
-[ec-api](https://github.com/l-walaszczyk/ec-ui)
+[ec-ui](https://github.com/l-walaszczyk/ec-ui)
 
 ## Link to the website (specifically to the appointment scheduler)
 
