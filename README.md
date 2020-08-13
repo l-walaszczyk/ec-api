@@ -1,6 +1,6 @@
 # ec-api
 
-### back-end part of the "ec" project
+### Back-end part of the "ec" project
 
 The "ec" project is a Single Page Application created for a psychologist Emilia Cwojdzińska. It was designed to provide the Emilia's customers with information about her areas of expertise, services she offers and - most importantly - a way to book an apointment online and pay for it in advance.
 
@@ -25,7 +25,7 @@ You need to have access to a MongoDB database. I recommend trying [MongoDB Atlas
 
 You also need to have a transactional email provider account. I recommend trying [Sendinblue](https://www.sendinblue.com/)
 
-It is important that **you change the text of the confirmational email so that you do not impersonate and misrepresent Emilia and her practition**. To do that, modify the object input that is an input to `transporter.sendMail` method which is located in `ec-ui/functions/emailSender.js` (returned to variable called `info`).
+It is important that **you change the text of the confirmational email so that you do not impersonate and misrepresent Emilia and her practition**. To do that, modify the object (specifically, its `html` property) that is an input to `transporter.sendMail` method which is located in `ec-ui/functions/emailSender.js` (returned to variable called `info`).
 
 Once you have the abovementioned services activated you have to create a file named `.env` in the main ec-api directory and paste the following code (filled with data of your accounts):
 
