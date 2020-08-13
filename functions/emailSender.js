@@ -104,8 +104,12 @@ const emailSender = async ({
                : ""
            }
 
-           <p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>
-
+           ${
+             meetingName.includes(" Skype")
+               ? `<p>Aby znaleźć mnie na Skype, proszę wyszukać w oknie programu: <i>${process.env.SKYPE}</i></p>`
+               : "<p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>"
+           }
+           
            <p>W razie konieczności przełożenia terminu wizyty proszę o kontakt.</p>
           
            <p>Pozdrawiam serdecznie i do zobaczenia,<br>
