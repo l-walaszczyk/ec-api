@@ -47,10 +47,14 @@ const emailSender = async ({
     to: emailContact,
     bcc: process.env.EMAIL_BCC,
     replyTo: process.env.EMAIL_REPLYTO,
-    subject: "Potwierdzenie zapisanej wizyty",
-    html: `<p>Poniższa wiadomość została wygenerowana automatycznie.</p>
+    subject: `Potwierdzenie ${
+      status === "paid" ? "opłaconej" : "zapisanej"
+    } wizyty`,
+    html: `
 
-           <p>Dziękuję za umówienie wizyty w moim gabinecie.<br>
+           <p>Dziękuję za umówienie wizyty w moim gabinecie${
+             status === "paid" ? "i dokonanie płatności" : "."
+           }<br>
            Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
 
            <h3>Podsumowanie:</h3>
@@ -108,7 +112,9 @@ const emailSender = async ({
            Emilia Cwojdzińska<br>
            ul. T. Kościuszki 2, 66-110 Babimost<br>
            tel. <a href="tel:600044618">600 044 618</a><br>
-           <a href="https://www.emiliacwojdzinska.pl">www.emiliacwojdzinska.pl</a></p>`,
+           <a href="https://www.emiliacwojdzinska.pl">www.emiliacwojdzinska.pl</a></p>
+           
+           <p>Powyższa wiadomość została wygenerowana automatycznie.</p>`,
   });
 
   console.log("Message sent: %s", info.messageId);
