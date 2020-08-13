@@ -53,9 +53,10 @@ const emailSender = async ({
     html: `
 
            <p>Dziękuję za umówienie wizyty w moim gabinecie${
-             status === "paid" ? "i dokonanie płatności" : "."
-           }<br>
-           Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
+             status === "paid" ? " i dokonanie płatności" : ""
+           }.</p>
+           
+           <p>Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
 
            <h3>Podsumowanie:</h3>
            <ul>
