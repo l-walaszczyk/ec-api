@@ -51,7 +51,7 @@ const emailSender = async ({
     html: `<p>Poniższa wiadomość została wygenerowana automatycznie.</p>
 
            <p>Dziękuję za umówienie wizyty w moim gabinecie.<br>
-           Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę oodpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
+           Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
 
            <h3>Podsumowanie:</h3>
            <ul>
