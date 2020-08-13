@@ -25,7 +25,7 @@ You need to have access to a MongoDB database. I recommend trying [MongoDB Atlas
 
 You also need to have a transactional email provider account. I recommend trying [Sendinblue](https://www.sendinblue.com/)
 
-It is important that **you change the text of the confirmational email text so that you do not impersonate and misrepresent Emilia and her practition**. To do that, modify the object (specifically, its `html` property) that is an input to `transporter.sendMail` method which is located in `ec-ui/functions/emailSender.js`. The contents of the confirmation email are within template literals, in the area of lines 50-120.
+**It is important that you change the text of the confirmation email so that you do not impersonate and misrepresent Emilia and her practition.** To do that, modify the object (specifically, its `html` property) that is an input to `transporter.sendMail` method which is located in `ec-ui/functions/emailSender.js`. The contents of the confirmation email are within template literals, in the area of lines 50-120.
 
 Once you have the abovementioned services activated you have to create a file named `.env` in the main ec-api directory and paste the following code (filled with data of your accounts):
 
