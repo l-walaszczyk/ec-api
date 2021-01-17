@@ -10,23 +10,18 @@ const emailSender = async ({
   meetingPrice,
   meetingDuration,
   selectedFieldIndex,
-  numberOfPeople,
   meetingDetails: {
     firstNameContact,
     lastNameContact,
     firstName2,
     lastName2,
-    yearOfBirth2,
     firstName3,
     lastName3,
     emailContact,
     phoneContact,
-    paymentMethod,
   },
 }) => {
   const meetingDateLocal = moment.utc(meetingDate).tz("Europe/Warsaw");
-
-  const messages = {};
 
   // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
