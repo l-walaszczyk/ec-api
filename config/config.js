@@ -1,5 +1,5 @@
 module.exports = {
-  blockFractionOfHour: 0.5,
+  blockFractionOfHour: 1,
   purgeTempMeetingsOlderThan: 30,
   allowedOrigins: [
     "https://emiliacwojdzinska.pl",
