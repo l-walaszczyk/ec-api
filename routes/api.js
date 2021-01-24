@@ -276,9 +276,12 @@ router.post("/p24status", async (req, res) => {
 router.post("/delivered", async (req, res) => {
   const { email } = req.body;
   const messageId = req.body["message-id"];
-  console.log("Email delivered, messageId:", messageId);
 
-  if (email !== process.env.EMAIL_BCC) {
+  console.log(`Email delivered to ${email}; messageId: ${messageId}`);
+
+  const emailsArrayBCC = process.env.EMAIL_BCC.split(", ");
+
+  if (emailsArrayBCC.filter((item) => item === email).length === 0) {
     try {
       // \/ GETTING AND UPDATING DATA FROM DB \/
       const meeting = await Meetings.findOne({

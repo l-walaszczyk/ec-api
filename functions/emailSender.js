@@ -51,7 +51,7 @@ const emailSender = async ({
              status === "paid" ? " i dokonanie płatności" : ""
            }.</p>
            
-           <p>Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać porawione dane.</p>
+           <p>Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać poprawione dane.</p>
 
            <h3>Podsumowanie:</h3>
            <ul>
@@ -81,8 +81,7 @@ const emailSender = async ({
           
            ${
              selectedFieldIndex === 1
-               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza, znajdującego się
-             w materiałach do pobrania na mojej stronie i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczenie osobiście podczas wizyty w gabinecie.</p>
+               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza (linki do pobrania poniżej) i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczenie osobiście podczas wizyty w gabinecie.</p>
 
              <p>Bardzo proszę także o wypełnienie i odesłanie zgody rodzica/opiekuna na wizytę dziecka/nastolatka.</p>
              
