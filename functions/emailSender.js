@@ -47,9 +47,9 @@ const emailSender = async ({
     } wizyty`,
     html: `
 
-           <p>Dziękuję za umówienie wizyty w moim gabinecie${
-             status === "paid" ? " i dokonanie płatności" : ""
-           }.</p>
+           <p>Dziękuję za umówienie wizyty ${
+             meetingName.includes("Skype") ? "online" : "w moim gabinecie"
+           }${status === "paid" ? " i dokonanie płatności." : "."}</p>
            
            <p>Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać poprawione dane.</p>
 
@@ -81,15 +81,11 @@ const emailSender = async ({
           
            ${
              selectedFieldIndex === 1
-               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie kwestionariusza (linki do pobrania poniżej) i przesłanie go do mnie za pośrednictwem poczty e-mail lub dostarczenie osobiście podczas wizyty w gabinecie.</p>
-
-             <p>Bardzo proszę także o wypełnienie i odesłanie zgody rodzica/opiekuna na wizytę dziecka/nastolatka.</p>
-             
-             <p>Linki do pobrania kwestionariusza:</p>
-             <ul>
-             <li><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.doc">plik w formacie .doc (jeśli wypełniamy na komputerze)</a></li>
-             <li><a href="https://emiliacwojdzinska.pl/docs/Kwestionariusz%20dzieci%20pytania.pdf">plik w formacie .pdf (jeśli drukujemy i wypełniamy ręcznie)</a></li>
-             </ul>
+               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie zgody rodzica/opiekuna na wizytę dziecka/nastolatka (linki do pobrania poniżej) i przesłanie jej do mnie za pośrednictwem poczty e-mail${
+                   meetingName.includes("Skype")
+                     ? "."
+                     : " lub dostarczenie osobiście podczas wizyty w gabinecie."
+                 }</p>
 
              <p>Linki do pobrania zgody rodzica/opiekuna:</p>
              <ul>
@@ -100,7 +96,7 @@ const emailSender = async ({
            }
 
            ${
-             meetingName.includes(" Skype")
+             meetingName.includes("Skype")
                ? `<p>Aby znaleźć mnie na Skype, proszę wyszukać w oknie programu: <i>${process.env.SKYPE}</i></p>`
                : "<p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>"
            }
