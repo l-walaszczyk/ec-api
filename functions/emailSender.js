@@ -50,7 +50,7 @@ const emailSender = async ({
            <p>Dziękuję za umówienie wizyty ${
              meetingName.includes("Skype") ? "online" : "w moim gabinecie"
            }${status === "paid" ? " i dokonanie płatności." : "."}</p>
-           
+
            <p>Proszę sprawdzić poprawność zapisanych danych, w razie potrzeby proszę odpowiedzieć mailowo na tę wiadomość i podać poprawione dane.</p>
 
            <h3>Podsumowanie:</h3>
@@ -78,37 +78,21 @@ const emailSender = async ({
       status === "paid" ? "już zapłacone" : "do opłacenia podczas wizyty"
     })</li>
            </ul>
-          
-           ${
-             selectedFieldIndex === 1
-               ? `<p>Przed pierwszą wizytą proszę o uzupełnienie zgody rodzica/opiekuna na wizytę dziecka/nastolatka (linki do pobrania poniżej) i przesłanie jej do mnie za pośrednictwem poczty e-mail${
-                   meetingName.includes("Skype")
-                     ? "."
-                     : " lub dostarczenie osobiście podczas wizyty w gabinecie."
-                 }</p>
-
-             <p>Linki do pobrania zgody rodzica/opiekuna:</p>
-             <ul>
-             <li><a href="https://emiliacwojdzinska.pl/docs/Zgoda%20opiekuna.doc">plik w formacie .doc (jeśli wypełniamy na komputerze)</a></li>
-             <li><a href="https://emiliacwojdzinska.pl/docs/Zgoda%20opiekuna.pdf">plik w formacie .pdf (jeśli drukujemy i wypełniamy ręcznie)</a></li>
-             </ul>`
-               : ""
-           }
 
            ${
              meetingName.includes("Skype")
                ? `<p>Aby znaleźć mnie na Skype, proszę wyszukać w oknie programu: <i>${process.env.SKYPE}</i></p>`
                : "<p>W trosce o anonimowość klientów, uprzejmie proszę o przybycie nie  wcześniej niż o ustalonej godzinie.</p>"
            }
-           
+
            <p>W razie konieczności przełożenia terminu wizyty proszę o kontakt.</p>
-          
+
            <p>Pozdrawiam serdecznie i do zobaczenia,<br>
            Emilia Cwojdzińska<br>
            ul. T. Kościuszki 2, 66-110 Babimost<br>
            tel. <a href="tel:600044618">600 044 618</a><br>
            <a href="https://www.emiliacwojdzinska.pl">www.emiliacwojdzinska.pl</a></p>
-           
+
            <p>Powyższa wiadomość została wygenerowana automatycznie.</p>`,
   });
 
